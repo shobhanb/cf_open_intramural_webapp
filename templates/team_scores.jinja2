@@ -1,0 +1,132 @@
+{% extends "base.jinja2" %}
+
+{% block title %}
+{{info.affiliate_name}} - Open {{info.year}} Intramural
+{% endblock title %}
+
+{% block heading %}
+{{info.affiliate_name}} - Open {{info.year}} Intramural
+{% endblock heading %}
+
+{% block menu %}
+<ul>
+  <li class="p-2 text-md rounded">
+    Team Scores
+    <ul>
+      {% for ordinal, event in info.event_names.items() %}
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href={{ "/team_scores/" ~ ordinal }}>{{ event }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li class="p-2 text-md rounded">
+    Leaderboard
+    <ul>
+      {% for ordinal, event in info.event_names.items() %}
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href={{ "/leaderboard/" ~ ordinal }}>{{ event }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </li>
+</ul>
+{% if admin %}
+<ul>
+  <li class="p-2 text-md rounded">
+    Admin
+    <ul>
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href="/admin/team_members">Team Members</a>
+      </li>
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href="/admin/team_scores">Team Scores</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+{% endif %}
+{% endblock menu %}
+
+{% block content %}
+<div class="flex w-full flex-col">
+  <div class="card bg-base-300 rounded-box grid h-12 place-items-center text-lg font-bold">
+    Team Scores {{ event_name }}
+  </div>
+  <div class="divider"></div>
+  <div class="overflow-auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Score</th>
+          {% for team in scores %}
+          <th>{{team}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Athlete Count</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("count",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Participation</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("participation",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Top 3</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("top3_score",)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Attendance</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("attendance_score",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Judge</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("judge_score",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Side Challenge</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("side_challenge_score",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Spirit</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("spirit_score",0)}}</td>
+          {% endfor %}
+        </tr>
+
+      </tbody>
+      <tfoot class="bg-base-300 font-bold">
+        <tr>
+          <td>{{ event_name }} Overall Score</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("total_score",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Intramural Overall Score</td>
+          {% for team in overall_score.values() %}
+          <td>{{team.get("overall_score",0)}}</td>
+          {% endfor %}
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+{% endblock content %}

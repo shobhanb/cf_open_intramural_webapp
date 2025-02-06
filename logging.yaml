@@ -1,0 +1,20 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+handlers:
+  console:
+    class: rich.logging.RichHandler
+    level: INFO
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: simple
+    maxBytes: 1000000
+    backupCount: 20
+    filename: log/info.log
+loggers:
+  root:
+    level: DEBUG
+    handlers: [console, file]

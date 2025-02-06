@@ -1,0 +1,40 @@
+
+<ul>
+  <li class="p-2 text-md rounded">
+    Team Scores
+    <ul>
+      {% for ordinal, event in info.event_names.items() %}
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href={{ "/team_scores/" ~ ordinal }}>{{ event }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li class="p-2 text-md rounded">
+    Leaderboard
+    <ul>
+      {% for ordinal, event in info.event_names.items() %}
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href={{ "/leaderboard/" ~ ordinal }}>{{ event }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </li>
+</ul>
+{% if info.admin %}
+<ul>
+  <li class="p-2 text-md rounded">
+    Admin
+    <ul>
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href="/admin/team_members">Team Members</a>
+      </li>
+      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <a href="/admin/team_scores">Team Scores</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+{% endif %}

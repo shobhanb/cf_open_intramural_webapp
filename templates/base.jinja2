@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- HTMX -->
+  <script  src="{{ url_for('static', path='js/htmx.min.js') }}" ></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"
+    integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+    crossorigin="anonymous"></script>
+  <!-- AlpineJS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- TailwindCSS & DaisyUI -->
+  {# <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" /> #}
+  <link href="{{ url_for('static', path='css/output.css') }}" rel="stylesheet" type="text/css" />
+  {# <script src="https://cdn.tailwindcss.com"></script> #}
+
+  <title>{% block title %} {% endblock title %} </title>
+</head>
+<!-- Navitgation component -->
+
+<body x-data="{ show_nav: false }" class="font-sans">
+  <nav class="flex flex-row justify-between items-center bg-base-200">
+    <div>
+      <button @click="show_nav = ! show_nav" class="btn btn-ghost btn-square">
+        <svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="flex flex-auto text-xl md:ml-1 hidden sm:flex font-bold hover:text-primary">
+      <a href="/">{% block heading %} {% endblock heading %} </a>
+    </div>
+    <div class="flex flex-row justify-items-end align-center items-center">
+      <a class="btn btn-ghost btn-sm  hover:text-primary" href="/refresh">Refresh</a>
+      <a class="" href="https://monkeyflagfitness.com/the-2025-monkey-flag-open/" target="_blank">
+        <img class="h-8 bg-base-100 p-1 m-1" src="{{ url_for('static', path='/images/monkeyflag_logo.gif') }}" alt="" />
+      </a>
+      <a class="" href="https://games.crossfit.com/affiliate/31316" target="_blank">
+        <img class="h-8 bg-neutral p-1 m-1" src="{{ url_for('static', path='/images/cf_games_logo.svg') }}"
+          target="_blank" />
+      </a>
+    </div>
+  </nav>
+  <div x-show="show_nav" class="navbar-menu relative z-50">
+    <div class="fixed inset-0 bg-base-100 opacity-25"></div>
+    <nav @click.outside="show_nav = false"
+      class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-base-300 border-r overflow-y-auto">
+      <div class="flex items-center mb-8">
+        <button @click="show_nav = false">
+          <svg class="h-6 w-6 cursor-pointer hover:text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div>
+        {% block menu %}
+        {% endblock menu %}
+      </div>
+      <div class="mt-auto">
+        <div class="pt-6">
+          <a class="block p-4 m-5 text-md text-center font-semibold bg-base-200 hover:bg-primary hover:text-primary-content rounded-xl"
+            href="#">Admin Sign in</a>
+        </div>
+        <p class="m-4 text-xs text-center text-base-300">
+          <span>Copyright © 2025</span>
+          <span>Shubham AI</span>
+        </p>
+      </div>
+    </nav>
+  </div>
+  <section class="container bg-base-100 max-h-full mx-auto p-3">
+    {% block content%}
+
+    {% endblock %}
+  </section>
+</body>
+
+</html>
