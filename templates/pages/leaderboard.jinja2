@@ -1,0 +1,43 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+
+<div class="flex w-full flex-col">
+  <div class="card bg-base-300 rounded-box grid h-12 place-items-center text-lg font-bold">
+    Leaderboard {{ event_name }}
+  </div>
+  <div class="divider"></div>
+
+  {% for category in leaderboard %}
+  <div class="card bg-base-300 rounded-box grid h-10 place-items-center text-md font-bold">
+    {{category}}
+  </div>
+  <div class="overflow-x-auto">
+    <table class="table table-pin-rows table-pin-cols">
+      <thead>
+        <tr>
+          <th>RX/Scaled</th>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Team</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for athlete in leaderboard[category] %}
+        <tr>
+          <td>{{ athlete.get("affiliate_scaled","") }}</td>
+          <td>{{ athlete.get("affiliate_rank","") }}</td>
+          <td>{{ athlete.get("name","") }}</td>
+          <td>{{ athlete.get("team_name", "") }}</td>
+          <td>{{ athlete.get("score_display", "") }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+</div>
+</div>
+
+{% endblock content %}

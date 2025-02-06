@@ -4,19 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- HTMX -->
-  <script  src="{{ url_for('static', path='js/htmx.min.js') }}" ></script>
-  <script src="https://unpkg.com/htmx.org@2.0.4"
-    integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
-    crossorigin="anonymous"></script>
-  <!-- AlpineJS -->
+  <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- TailwindCSS & DaisyUI -->
-  {# <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" /> #}
   <link href="{{ url_for('static', path='css/output.css') }}" rel="stylesheet" type="text/css" />
-  {# <script src="https://cdn.tailwindcss.com"></script> #}
-
-  <title>{% block title %} {% endblock title %} </title>
+  <title>
+    {% include "partials/title.jinja2" %}
+  </title>
 </head>
 <!-- Navitgation component -->
 
@@ -30,7 +23,9 @@
       </button>
     </div>
     <div class="flex flex-auto text-xl md:ml-1 hidden sm:flex font-bold hover:text-primary">
-      <a href="/">{% block heading %} {% endblock heading %} </a>
+      <a href="/">
+        {% include "partials/title.jinja2" %}
+      </a>
     </div>
     <div class="flex flex-row justify-items-end align-center items-center">
       <a class="btn btn-ghost btn-sm  hover:text-primary" href="/refresh">Refresh</a>
@@ -56,8 +51,7 @@
         </button>
       </div>
       <div>
-        {% block menu %}
-        {% endblock menu %}
+        {% include "partials/menu.jinja2" %}
       </div>
       <div class="mt-auto">
         <div class="pt-6">
@@ -73,7 +67,6 @@
   </div>
   <section class="container bg-base-100 max-h-full mx-auto p-3">
     {% block content%}
-
     {% endblock %}
   </section>
 </body>

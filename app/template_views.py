@@ -28,7 +28,7 @@ async def get_team_scores_ordinal(ordinal: int, request: Request, db_session: db
     overall_score = await get_total_scores(db_session=db_session)
     return templates.TemplateResponse(
         request=request,
-        name="team_scores.jinja2",
+        name="pages/team_scores.jinja2",
         context={
             "scores": scores,
             "overall_score": overall_score,
@@ -44,7 +44,7 @@ async def get_leaderboard_ordinal(ordinal: int, request: Request, db_session: db
     leaderboard = await get_leaderboard_scores(db_session=db_session, ordinal=ordinal)
     return templates.TemplateResponse(
         request=request,
-        name="leaderboard.jinja2",
+        name="pages/leaderboard.jinja2",
         context={"leaderboard": leaderboard, "event_name": EVENT_NAMES[ordinal], "info": RENDER_CONTEXT, "admin": True},
     )
 
