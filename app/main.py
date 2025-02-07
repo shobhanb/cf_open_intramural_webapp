@@ -4,14 +4,12 @@ from typing import Callable
 
 import uvicorn
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.auth.service import verify_token
-from app.cf_games.constants import RENDER_CONTEXT
+from app.auth.service import add_item_to_header, authenticate_request
 from app.database.base import Base
 from app.database.engine import session_manager
-from app.template import templates
+from app.ui.template import templates
 from app.views import router
 
 RESET_DB = False
@@ -39,27 +37,23 @@ async def health_check() -> dict:
 
 @app.exception_handler(404)
 @app.exception_handler(401)
-async def custom_404_handler(request: Request, __) -> HTMLResponse:  # noqa: ANN001
+async def custom_404_handler(request: Request, __) -> Response:  # noqa: ANN001
     return await get_404(request=request)
 
 
-async def get_404(request: Request) -> HTMLResponse:
+async def get_404(request: Request) -> Response:
     return templates.TemplateResponse(
         request=request,
         name="pages/404.jinja2",
-        context={"info": RENDER_CONTEXT, "admin": False},
     )
 
 
 @app.middleware("http")
 async def add_admin_headers(request: Request, call_next: Callable) -> Response:
-    token = request.cookies.get("access_token")
-    response = await call_next(request)
-    if token:
-        user = verify_token(token)
-        if user:
-            response.headers["X-Admin"] = "admin"
-    return response
+    user = authenticate_request(request)
+    if user:
+        request = add_item_to_header(request=request, key="rjtc_admin", value=user)
+    return await call_next(request)
 
 
 if __name__ == "__main__":

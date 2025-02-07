@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Annotated, Any
+from typing import Any
 
 import jwt
-from fastapi import Depends
+from fastapi import Request
 
-from app.auth.core import oauth2_scheme
 from app.auth.schemas import TokenData
 from app.settings import auth_settings
 
@@ -48,15 +47,17 @@ def verify_token(token: str) -> TokenData | None:
         return None
 
 
-def authenticate(
-    token: Annotated[str, Depends(oauth2_scheme)],
-) -> bool:
-    try:
-        payload = jwt.decode(token, auth_settings.secret_key, algorithms=[auth_settings.algorithm])
-        username = payload.get("sub")
-        if username == auth_settings.admin_username:
-            return True
-    except jwt.InvalidTokenError:
-        pass
+def authenticate_request(request: Request) -> str | None:
+    token = request.cookies.get("access_token")
+    if token:
+        token_data = verify_token(token)
+        if token_data:
+            return token_data.username
+    return None
 
-    return True
+
+def add_item_to_header(request: Request, key: str, value: str) -> Request:
+    headers = dict(request.scope["headers"])
+    headers[key.encode()] = value.encode()
+    request.scope["headers"] = list(headers.items())
+    return request

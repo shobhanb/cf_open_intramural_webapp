@@ -117,6 +117,7 @@ dependencies = [
     { name = "greenlet" },
     { name = "httpx" },
     { name = "jinja2" },
+    { name = "jinja2-fragments" },
     { name = "passlib", extra = ["bcrypt"] },
     { name = "pydantic-settings" },
     { name = "pyjwt" },
@@ -133,6 +134,7 @@ requires-dist = [
     { name = "greenlet", specifier = ">=3.1.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.5" },
+    { name = "jinja2-fragments", specifier = ">=1.7.0" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
     { name = "pydantic-settings", specifier = ">=2.7.1" },
     { name = "pyjwt", specifier = ">=2.10.1" },
@@ -337,6 +339,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9ade8708c365f3238046ac7cb8ccba6e81abccb0ccff/jinja2-3.1.5.tar.gz", hash = "sha256:8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb", size = 244674 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl", hash = "sha256:aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb", size = 134596 },
+]
+
+[[package]]
+name = "jinja2-fragments"
+version = "1.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jinja2" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/da/51/0af0e692250c5f37eec6fba8edf047fd155242c5bf7a0cece8069b98031b/jinja2_fragments-1.7.0.tar.gz", hash = "sha256:2ee597e1a4cfea80473559dead5ba20404c01d859541fb50c6bc53511e1f9035", size = 14633 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6c/f7/c5f0470fd7a6cfb41d7d3048f0b4c719907ecd70e17607640af5b4dee5ff/jinja2_fragments-1.7.0-py3-none-any.whl", hash = "sha256:0f21291e8ddae84ae05b3618be4598618086bc9c571d2d31def8250c35babb12", size = 11186 },
 ]
 
 [[package]]

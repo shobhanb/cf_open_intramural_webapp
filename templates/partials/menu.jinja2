@@ -34,12 +34,12 @@
         {% endfor %}
       </ul>
     </li>
-    {% if admin %}
+    {% if "rjtc_admin" in request.headers %}
     <li class="p-2 text-md rounded">
       Admin
       <ul>
         <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-          <a href="/admin/team_members">Team Members</a>
+          <a href="/assign_teams">Assign Teams</a>
         </li>
 
       </ul>

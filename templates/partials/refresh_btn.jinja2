@@ -1,6 +1,6 @@
-{% if admin %}
+{% if "rjtc_admin" in request.headers %}
 <div x-data="{ show_spinner: false }">
     <span x-show="show_spinner" class="loading loading-spinner text-primary">Loading</span>
-    <a @click="show_spinner = true" class="btn btn-ghost   hover:text-primary" href="/refresh">Refresh</a>
+    <a @click="show_spinner = true" class="btn btn-ghost hover:text-primary" href="/refresh">Refresh</a>
 </div>
 {% endif %}
