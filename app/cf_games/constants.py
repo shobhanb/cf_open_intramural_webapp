@@ -15,7 +15,11 @@ RENDER_CONTEXT = {
     "year": YEAR,
     "affiliate_name": AFFILIATE_NAME,
     "event_names": EVENT_NAMES,
-    "admin": False,
+}
+
+TEAM_LEADER_MAP = {
+    "TL": 2,
+    "C": 1,
 }
 
 TEAM_ASSIGNMENTS_FILEPATH = "static/team_assignments.csv"

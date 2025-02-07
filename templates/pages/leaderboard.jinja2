@@ -3,17 +3,16 @@
 {% block content %}
 
 <div class="flex w-full flex-col">
-  <div class="card bg-base-300 rounded-box grid h-12 place-items-center text-lg font-bold">
+  <div class="card bg-base-300 mb-2 rounded-box grid h-12 place-items-center text-lg font-bold">
     Leaderboard {{ event_name }}
   </div>
-  <div class="divider"></div>
 
   {% for category in leaderboard %}
-  <div class="card bg-base-300 rounded-box grid h-10 place-items-center text-md font-bold">
+  <div class="card  mt-2 bg-base-300 rounded-box grid h-10 place-items-center text-md font-bold">
     {{category}}
   </div>
-  <div class="overflow-x-auto">
-    <table class="table table-pin-rows table-pin-cols">
+  <div class="overflow-x-auto ">
+    <table class="table">
       <thead>
         <tr>
           <th>RX/Scaled</th>
@@ -24,15 +23,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for athlete in leaderboard[category] %}
-        <tr>
+        {% for athlete in leaderboard[category]  %} <tr>
           <td>{{ athlete.get("affiliate_scaled","") }}</td>
           <td>{{ athlete.get("affiliate_rank","") }}</td>
           <td>{{ athlete.get("name","") }}</td>
           <td>{{ athlete.get("team_name", "") }}</td>
           <td>{{ athlete.get("score_display", "") }}</td>
-        </tr>
-        {% endfor %}
+          </tr>
+          {% endfor %}
       </tbody>
     </table>
   </div>

@@ -1,0 +1,32 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+
+<div id="loginform" class="hero ">
+  <div class="hero-content flex-col">
+    <div class="text-center">
+      <div class="text-4xl font-bold">Login</div>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <form hx-post="/login" hx-target="#loginform" hx-swap="outerHTML" class="card-body" >
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Username</span>
+          </label>
+          <input placeholder="admin" name="username" id="username" class="input input-bordered" required />
+        </div>
+        <div class="form-control">
+          <label  class="label">
+            <span  class="label-text">Password</span>
+          </label>
+          <input type="password" name="password" id="password" placeholder="password" class="input input-bordered" required />
+        </div>
+        <div class="form-control mt-6">
+          <button class="btn btn-primary">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

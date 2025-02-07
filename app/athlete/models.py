@@ -44,7 +44,7 @@ class Athlete(Base):
 
     # Affiliate columns
     mf_age_category: Mapped[str] = mapped_column(String, default=apply_mf_age_category)
-    team_name: Mapped[str] = mapped_column(String, default="Unassigned")
+    team_name: Mapped[str] = mapped_column(String, default="zz")
     team_leader: Mapped[int] = mapped_column(Integer, default=0)
 
     # Relationships

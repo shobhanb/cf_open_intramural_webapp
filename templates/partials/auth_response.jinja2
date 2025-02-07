@@ -1,0 +1,13 @@
+{# <meta http-equiv="refresh" content="1; URL='/'" /> #}
+
+<div class="hero">
+  <div class="hero-content flex-col text-center">
+    <div class="text-4xl font-bold">
+      {% if admin %}
+      <span>Login successful</span>
+      {% else %}
+      <span>Incorrect username / password</span>
+      {% endif %}
+    </div>
+  </div>
+</div>

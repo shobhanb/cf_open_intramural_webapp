@@ -1,42 +1,57 @@
 {% block menu %}
-
-<ul>
-  Team Scores
+<div>
   <ul>
-    {% for ordinal, event in info.event_names.items() %}
-    <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-      <a href={{ "/team_scores/" ~ ordinal }}>{{ event }}</a>
+    <li class="p-2 text-md rounded font-semibold hover:text-primary">
+      <a href="/team_members">Team Members</a>
     </li>
-    {% endfor %}
-  </ul>
-  </li>
-</ul>
-<ul>
-  <li class="p-2 text-md rounded">
-    Leaderboard
-    <ul>
-      {% for ordinal, event in info.event_names.items() %}
-      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-        <a href={{ "/leaderboard/" ~ ordinal }}>{{ event }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-  </li>
-</ul>
-{% if info.admin %}
-<ul>
-  <li class="p-2 text-md rounded">
-    Admin
-    <ul>
-      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-        <a href="/admin/team_members">Team Members</a>
-      </li>
-      <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-        <a href="/admin/team_scores">Team Scores</a>
-      </li>
-    </ul>
-  </li>
-</ul>
-{% endif %}
+    <li class="p-2 text-md  rounded ">
+      Team Scores
+      <ul>
+        {% for ordinal, event in info.event_names.items() %}
+        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+          <a href={{ "/team_scores/" ~ ordinal }}>{{ event }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
+    <li class="p-2 text-md rounded">
+      Leaderboard
+      <ul>
+        {% for ordinal, event in info.event_names.items() %}
+        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+          <a href={{ "/leaderboard/" ~ ordinal }}>{{ event }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
+    <li class="p-2 text-md rounded">
+      Athlete Scores
+      <ul>
+        {% for ordinal, event in info.event_names.items() %}
+        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+          <a href={{ "/athlete_scores/" ~ ordinal }}>{{ event }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
+    {% if admin %}
+    <li class="p-2 text-md rounded">
+      Admin
+      <ul>
+        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+          <a href="/admin/team_members">Team Members</a>
+        </li>
 
+      </ul>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+<div class="mt-auto">
+  {% include "partials/admin_btn.jinja2" %}
+  <p class="m-4 text-xs text-center ">
+    <span>Copyright © 2025</span>
+    <span>Shubham AI</span>
+  </p>
+</div>
 {% endblock menu %}

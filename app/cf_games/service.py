@@ -21,6 +21,7 @@ from app.cf_games.constants import (
     SIDE_CHALLENGE_FILEPATH,
     SPIRIT_FILEPATH,
     TEAM_ASSIGNMENTS_FILEPATH,
+    TEAM_LEADER_MAP,
     TOP3_SCORE,
     YEAR,
 )
@@ -125,7 +126,12 @@ async def apply_team_assignments(
 ) -> None:
     async with aiofiles.open(TEAM_ASSIGNMENTS_FILEPATH) as file:
         async for row in AsyncReader(file):
-            update_stmt = update(Athlete).where(Athlete.name == row[0].title()).values(team_name=row[1])
+            name = row[0].title()
+            team_name = row[1]
+            team_leader = TEAM_LEADER_MAP.get(row[2], 0)
+            update_stmt = (
+                update(Athlete).where(Athlete.name == name).values(team_name=team_name, team_leader=team_leader)
+            )
             await db_session.execute(update_stmt)
 
     await db_session.commit()
@@ -201,7 +207,7 @@ async def apply_judge_score(
     for row in judges:
         select_score_stmt = (
             select(Score.id)
-            .join_from(Score, Athlete, Score.athlete_id == Score.id)
+            .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
             .where((Athlete.name == row.get("judge_name")) & (Score.ordinal == row.get("ordinal")))
         )
         update_stmt = (

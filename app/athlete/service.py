@@ -1,4 +1,3 @@
-from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -20,11 +19,20 @@ async def get_year_affiliate_athletes(
 
 async def get_athlete_teams(
     db_session: db_dependency,
-    year: int = int(YEAR),
-    affiliate_id: int = int(AFFILIATE_ID),
-) -> list[dict[str, Any]]:
-    stmt = select(Athlete.name, Athlete.team_name, Athlete.team_leader).where(
-        (Athlete.year == year) & (Athlete.affiliate_id == affiliate_id),
+) -> dict[str, list[str]]:
+    stmt = select(Athlete.name, Athlete.team_name, Athlete.team_leader).order_by(
+        Athlete.team_name,
+        Athlete.team_leader.desc(),
+        Athlete.name,
     )
-    result = await db_session.execute(stmt)
-    return list(result.scalars())
+    ret = await db_session.execute(stmt)
+    teams = {}
+    result = ret.mappings().all()
+    for row in result:
+        team_name = row.get("team_name")
+        if team_name in teams:
+            teams[team_name].append(row)
+        else:
+            teams[team_name] = [row]
+
+    return teams

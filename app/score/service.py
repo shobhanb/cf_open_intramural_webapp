@@ -81,6 +81,54 @@ async def get_leaderboard_scores(
             Score.score_display,
         )
         .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+        .where((Score.ordinal == ordinal) & (Score.affiliate_rank <= 3))  # noqa: PLR2004
+        .order_by(
+            Athlete.gender,
+            Athlete.mf_age_category.desc(),
+            Score.affiliate_scaled,
+            Score.scaled,
+            Score.score.desc(),
+            Score.rank.desc(),
+            Athlete.name,
+        )
+    )
+    ret = await db_session.execute(stmt)
+    result = ret.mappings().all()
+    leaderboard = {}
+    for row in result:
+        category = row.get("gender", "") + "-" + row.get("mf_age_category", "")
+        if category in leaderboard:
+            leaderboard[category].append(row)
+        else:
+            leaderboard[category] = [row]
+    return leaderboard
+
+
+async def get_all_athlete_scores(
+    db_session: AsyncSession,
+    ordinal: int,
+) -> dict[str, dict[str, Any]]:
+    stmt = (
+        select(
+            Athlete.name,
+            Athlete.gender,
+            Athlete.mf_age_category,
+            Athlete.team_name,
+            Score.affiliate_scaled,
+            Score.affiliate_rank,
+            Score.score_display,
+            Score.reps,
+            Score.time_ms,
+            Score.tiebreak_ms,
+            Score.participation_score,
+            Score.top3_score,
+            Score.attendance_score,
+            Score.judge_score,
+            Score.side_challenge_score,
+            Score.spirit_score,
+            Score.total_score,
+        )
+        .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
         .where(Score.ordinal == ordinal)
         .order_by(
             Athlete.gender,
