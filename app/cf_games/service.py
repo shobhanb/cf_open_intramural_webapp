@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import csv
 import logging
 
-import aiofiles
-from aiocsv import AsyncReader
 from httpx import AsyncClient
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -137,8 +136,9 @@ async def process_cf_data(
 async def apply_team_assignments(
     db_session: AsyncSession,
 ) -> None:
-    async with aiofiles.open(TEAM_ASSIGNMENTS_FILEPATH) as file:
-        async for row in AsyncReader(file):
+    with open(TEAM_ASSIGNMENTS_FILEPATH) as file:
+        reader = csv.reader(file)
+        for row in reader:
             name = row[0].title()
             team_name = row[1]
             team_leader = TEAM_LEADER_MAP.get(row[2], 0)
@@ -184,8 +184,9 @@ async def apply_attendance_scores(
     db_session: AsyncSession,
 ) -> None:
     attendance = {}
-    async with aiofiles.open(ATTENDANCE_FILEPATH) as file:
-        async for row in AsyncReader(file):
+    with open(ATTENDANCE_FILEPATH) as file:
+        reader = csv.reader(file)
+        for row in reader:
             if row[0] in attendance:
                 attendance[row[0]].append(row[1].title())
             else:
@@ -231,8 +232,9 @@ async def apply_judge_score(
 async def apply_side_challenge_score(
     db_session: AsyncSession,
 ) -> None:
-    async with aiofiles.open(SIDE_CHALLENGE_FILEPATH) as file:
-        async for row in AsyncReader(file):
+    with open(SIDE_CHALLENGE_FILEPATH) as file:
+        reader = csv.reader(file)
+        for row in reader:
             select_stmt = (
                 (
                     select(Score.id)
@@ -253,8 +255,9 @@ async def apply_side_challenge_score(
 async def apply_spirit_score(
     db_session: AsyncSession,
 ) -> None:
-    async with aiofiles.open(SPIRIT_FILEPATH) as file:
-        async for row in AsyncReader(file):
+    with open(SPIRIT_FILEPATH) as file:
+        reader = csv.reader(file)
+        for row in reader:
             select_stmt = (
                 (
                     select(Score.id)
