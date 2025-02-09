@@ -2,7 +2,7 @@
 *.db
 log/
 node_modules/
-static/
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

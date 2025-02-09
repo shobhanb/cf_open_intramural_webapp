@@ -18,6 +18,7 @@
           <th>RX/Scaled</th>
           <th>Rank</th>
           <th>Name</th>
+          <th>Valid</th>
           <th>Team</th>
           <th>Score</th>
           <th>Reps</th>
@@ -33,10 +34,12 @@
         </tr>
       </thead>
       <tbody>
-        {% for athlete in scores[category]  %} <tr>
+        {% for athlete in scores[category] %}
+        <tr>
           <td>{{ athlete.get("affiliate_scaled","") }}</td>
           <td>{{ athlete.get("affiliate_rank","") }}</td>
           <td>{{ athlete.get("name","") }}</td>
+          <td>{{ athlete.get("valid","") }}</td>
           <td>{{ athlete.get("team_name", "") }}</td>
           <td>{{ athlete.get("score_display", "") }}</td>
           <td>{{ athlete.get("reps", "") }}</td>
@@ -49,8 +52,8 @@
           <td>{{ athlete.get("side_challenge_score", "") }}</td>
           <td>{{ athlete.get("spirit_score", "") }}</td>
           <td>{{ athlete.get("total_score", "") }}</td>
-          </tr>
-          {% endfor %}
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

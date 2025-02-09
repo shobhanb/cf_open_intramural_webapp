@@ -21,6 +21,7 @@ TEAM_LEADER_MAP = {
     "TL": 2,
     "C": 1,
 }
+TEAM_LEADER_REVERSE_MAP = {v: k for k, v in TEAM_LEADER_MAP.items()}
 
 TEAM_ASSIGNMENTS_FILEPATH = "static/team_assignments.csv"
 ATTENDANCE_FILEPATH = "static/attendance.csv"
@@ -41,24 +42,18 @@ APPRECIATION_SCORE = 3
 CF_DIVISION_MAP = {
     "1": "Men Open",
     "2": "Women Open",
-    "18": "Men 35-39",
-    "19": "Women 35-39",
-    "12": "Men 40-44",
-    "13": "Women 40-44",
-    "3": "Men 45-49",
-    "4": "Women 45-49",
-    "5": "Men 50-54",
-    "6": "Women 50-54",
+    "14": "Men 14-15",
+    "15": "Women 14-15",
+    "16": "Men 16-17",
+    "17": "Women 16-17",
     "7": "Men 55-59",
     "8": "Women 55-59",
     "36": "Men 60-64",
     "37": "Women 60-64",
-    "38": "Men 65+",
-    "39": "Women 65+",
-    "16": "Men 16-17",
-    "17": "Women 16-17",
-    "14": "Men 14-15",
-    "15": "Women 14-15",
+    "40": "Men 65-69",
+    "41": "Women 65-69",
+    "42": "Men 70+",
+    "43": "Women 70+",
 }
 
 

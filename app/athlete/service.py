@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -17,7 +18,19 @@ async def get_year_affiliate_athletes(
     return list(result.scalars())
 
 
-async def get_athlete_teams(
+async def get_athlete_teams_list(
+    db_session: db_dependency,
+) -> list[dict[str, Any]]:
+    stmt = select(Athlete.name, Athlete.team_name, Athlete.team_leader).order_by(
+        Athlete.team_name,
+        Athlete.team_leader.desc(),
+        Athlete.name,
+    )
+    ret = await db_session.execute(stmt)
+    return [dict(x) for x in ret.mappings().all()]
+
+
+async def get_athlete_teams_dict(
     db_session: db_dependency,
 ) -> dict[str, list[str]]:
     stmt = select(Athlete.name, Athlete.team_name, Athlete.team_leader).order_by(

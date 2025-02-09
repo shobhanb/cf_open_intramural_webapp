@@ -1,22 +1,38 @@
 {% extends "base.jinja2" %}
 
 {% block content %}
-<div class="flex w-full flex-col">
-  <div class="card bg-base-300 rounded-box grid h-12 place-items-center text-lg font-bold">
-    Assign Teams 
-  </div>
-  <div class="overflow-auto">
-    <div class="flex flex-col sm:flex-row justify-evenly ">
-      {% for team_name in teams if team_name != "zz" %}
-      <ul class="list flex-auto bg-base-100 rounded-box m-2 px-2 shadow-md">
-        <li class="p-2 mb-2 bg-base-300 rounded-box shadow-md text-center text-wrap">{{team_name}}</li>
-        {% for row in teams.get(team_name) %}
-        <li class="list-row text-center text-wrap pb-1">{{ row.get("name")}}</li>
-        {% endfor %}
-      </ul>
-      {% endfor %}
+
+<div class="hero flex flex-col sm:flex-row justify-evenly">
+
+  <div class="hero-content flex-col">
+    <div class="text-center">
+      <div class="text-4xl font-bold">Assign Teams</div>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div class="card-body">
+        <form class="form-control" type="search" placeholder="Search Name" hx-post="/athlete_teams"
+          hx-trigger="input changed delay:300ms, keyup[key=='Enter'], load" hx-target="#search-results">
+          <label class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input name="name" id="Name" placeholder="name" class="input input-bordered" />
+        </form>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="table table-xs">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Team</th>
+            <th>TL / C</th>
+          </tr>
+        </thead>
+        <tbody id="search-results">
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
-</div>
+
 {% endblock content %}

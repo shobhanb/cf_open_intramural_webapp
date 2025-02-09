@@ -8,7 +8,7 @@
       Team Scores
       <ul>
         {% for ordinal, event in info.event_names.items() %}
-        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <li class="p-1 ml-4 text-md font-semibold rounded hover:text-primary">
           <a href={{ "/team_scores/" ~ ordinal }}>{{ event }}</a>
         </li>
         {% endfor %}
@@ -18,7 +18,7 @@
       Leaderboard
       <ul>
         {% for ordinal, event in info.event_names.items() %}
-        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <li class="p-1 ml-4 text-md font-semibold rounded hover:text-primary">
           <a href={{ "/leaderboard/" ~ ordinal }}>{{ event }}</a>
         </li>
         {% endfor %}
@@ -28,7 +28,7 @@
       Athlete Scores
       <ul>
         {% for ordinal, event in info.event_names.items() %}
-        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
+        <li class="p-1 ml-4 text-md font-semibold rounded hover:text-primary">
           <a href={{ "/athlete_scores/" ~ ordinal }}>{{ event }}</a>
         </li>
         {% endfor %}
@@ -38,8 +38,8 @@
     <li class="p-2 text-md rounded">
       Admin
       <ul>
-        <li class="p-2 ml-4 text-md font-semibold rounded hover:text-primary">
-          <a href="/assign_teams">Assign Teams</a>
+        <li class="p-1 ml-4 text-md font-semibold rounded hover:text-primary">
+          <a href="/assign_teams">Manual Team Assign</a>
         </li>
 
       </ul>

@@ -48,11 +48,11 @@ def verify_token(token: str) -> TokenData | None:
 
 
 def authenticate_request(request: Request) -> str | None:
-    token = request.cookies.get("access_token")
-    if token:
-        token_data = verify_token(token)
-        if token_data:
-            return token_data.username
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        access_token_data = verify_token(access_token)
+        if access_token_data:
+            return access_token_data.username
     return None
 
 

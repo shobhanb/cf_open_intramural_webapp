@@ -65,6 +65,9 @@ session_manager = SessionManager(
     db_settings.url,
     kwargs={
         "echo": False,
+        "pool_pre_ping": True,
+        # For SQLite
+        "connect_args": {"check_same_thread": False},
     },
 )
 

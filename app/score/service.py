@@ -127,6 +127,7 @@ async def get_all_athlete_scores(
             Score.side_challenge_score,
             Score.spirit_score,
             Score.total_score,
+            Score.valid,
         )
         .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
         .where(Score.ordinal == ordinal)

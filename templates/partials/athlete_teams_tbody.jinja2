@@ -1,0 +1,20 @@
+{% for athlete in athlete_teams %}
+<tr x-data="{ editing: false }">
+    <td>{{ athlete.get("name")}} </td>
+    <td x-show="! editing">{{ athlete.get("team_name")}} </td>
+    <td x-show="! editing">{{ athlete.get("tl_c")}} </td>
+    <td x-show="! editing">
+        <button @click="editing = true" class="btn btn-xs hover:btn-primary">Edit</button>
+    </td>
+    <td x-show="editing">
+        <input class="border rounded-md" name="team_name" value="{{athlete.get('team_name')}}" />
+    </td>
+    <td x-show="editing">
+        <input class="border rounded-md w-8" name="team_name" value="{{athlete.get('tl_c')}}" />
+    </td>
+    <td x-show="editing">
+        <button class="btn btn-xs hover:btn-success">Save</button>
+        <button @click="editing = false" class="btn btn-xs hover:btn-error">Cancel</button>
+    </td>
+</tr>
+{% endfor %}

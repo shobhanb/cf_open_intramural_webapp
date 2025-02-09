@@ -5,7 +5,12 @@ from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.auth.service import add_item_to_header, create_access_token, verify_admin_username_password
+from app.auth.service import (
+    add_item_to_header,
+    create_access_token,
+    create_refresh_token,
+    verify_admin_username_password,
+)
 from app.ui.template import templates
 
 log = logging.getLogger("uvicorn.error")
@@ -34,9 +39,11 @@ async def login_for_access_token(
 
         data = {"sub": form_data.username}
         access_token = create_access_token(data=data)
+        refresh_token = create_refresh_token(data=data)
 
         response = templates.TemplateResponse(request=request, name="partials/auth_success.jinja2")
         response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="lax")
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="lax")
         return response
 
     return templates.TemplateResponse(request=request, name="partials/auth_fail.jinja2")
@@ -46,4 +53,5 @@ async def login_for_access_token(
 async def logout() -> RedirectResponse:
     response = RedirectResponse(url="/")
     response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
     return response

@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 
-from app.auth.service import add_item_to_header, authenticate_request
+from app.auth.service import add_item_to_header, create_access_token, verify_token
 from app.database.base import Base
 from app.database.engine import session_manager
 from app.ui.template import templates
@@ -50,9 +50,23 @@ async def get_404(request: Request) -> Response:
 
 @app.middleware("http")
 async def add_admin_headers(request: Request, call_next: Callable) -> Response:
-    user = authenticate_request(request)
-    if user:
-        request = add_item_to_header(request=request, key="rjtc_admin", value=user)
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        access_token_data = verify_token(access_token)
+        if access_token_data:
+            request = add_item_to_header(request=request, key="rjtc_admin", value=access_token_data.username)  # type: ignore  # noqa: PGH003
+            return await call_next(request)
+
+    refresh_token = request.cookies.get("refresh_token")
+    if refresh_token:
+        refresh_token_data = verify_token(refresh_token)
+        if refresh_token_data:
+            new_access_token = create_access_token({"sub": refresh_token_data.username})
+            request = add_item_to_header(request=request, key="rjtc_admin", value=refresh_token_data.username)  # type: ignore  # noqa: PGH003
+            response = await call_next(request)
+            response.set_cookie(key="access_token", value=new_access_token, httponly=True, samesite="lax")
+            return response
+
     return await call_next(request)
 
 

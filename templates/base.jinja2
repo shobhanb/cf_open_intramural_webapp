@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <link href="{{ url_for('static', path='css/output.css') }}" rel="stylesheet" type="text/css" />
   <title>
     {% include "partials/title.jinja2" %}
@@ -39,7 +39,7 @@
       </a>
     </div>
   </nav>
-  <div x-show="show_nav" class="navbar-menu relative z-50">
+  <div x-show="show_nav" x-transition class="navbar-menu relative z-50">
     <div class="fixed inset-0 bg-base-100 opacity-25"></div>
     <nav @click.outside="show_nav = false"
       class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-base-300 border-r overflow-y-auto">

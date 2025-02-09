@@ -4,8 +4,8 @@ import asyncio
 import logging
 
 import aiofiles
-import httpx
 from aiocsv import AsyncReader
+from httpx import AsyncClient
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,7 +14,7 @@ from app.cf_games.constants import (
     AFFILIATE_ID,
     ATTENDANCE_FILEPATH,
     ATTENDANCE_SCORE,
-    CF_API_REQUEST_THROTTLE_SECONDS,
+    CF_DIVISION_MAP,
     CF_LEADERBOARD_URL,
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
@@ -31,6 +31,35 @@ from app.score.models import Score
 log = logging.getLogger("uvicorn.error")
 
 
+async def cf_data_api(  # noqa: PLR0913
+    httpx_client: AsyncClient,
+    api_url: str,
+    affiliate_code: int,
+    division: int,
+    entrant_list: list[dict],
+    scores_list: list[dict],
+) -> None:
+    total_pages = 1
+    page = 1
+    while True:
+        params = {"affiliate": affiliate_code, "page": page, "per_page": 100, "view": 0, "division": division}
+        response = await httpx_client.get(url=api_url, params=params)
+
+        json_response = response.json()
+        leaderboard_list = json_response.get("leaderboardRows", [])
+        entrants = [x.get("entrant") for x in leaderboard_list]
+        entrant_list.extend(entrants)
+        scores = [x.get("scores") for x in leaderboard_list]
+        scores_list.extend(scores)
+
+        # Handle pagination
+        total_pages = json_response.get("pagination", {}).get("totalPages", 1)
+        if total_pages <= page:
+            break
+
+        page += 1
+
+
 async def get_cf_data(affiliate_code: int, year: int) -> tuple[int, list[dict], list[dict]]:
     """Get CF leaderboard data."""
     log.info("Getting CF Leaderboard data for year %s affiliate code %s", year, affiliate_code)
@@ -38,36 +67,21 @@ async def get_cf_data(affiliate_code: int, year: int) -> tuple[int, list[dict], 
     scores_list = []
 
     api_url = CF_LEADERBOARD_URL.replace("YYYY", str(year))
-    aclient = httpx.AsyncClient()
 
-    # Only pull division 1 (Men) & 2 (Women) because it includes all details.
-    # Pulling other divisions would be double counting.
-    for id_ in range(1, 50):
-        total_pages = 1
-        page = 1
-        while True:
-            params = {"affiliate": affiliate_code, "page": page, "per_page": 100, "view": 0, "division": id_}
-            response = await aclient.get(url=api_url, params=params)
-
-            json_response = response.json()
-            leaderboard_list = json_response.get("leaderboardRows", [])
-            entrants = [
-                x.get("entrant") for x in leaderboard_list if int(x.get("entrant", {}).get("divisionId")) == id_
-            ]
-            entrant_list.extend(entrants)
-            scores = [x.get("scores") for x in leaderboard_list if int(x.get("entrant", {}).get("divisionId")) == id_]
-            scores_list.extend(scores)
-
-            # Handle pagination
-            total_pages = json_response.get("pagination", {}).get("totalPages", 1)
-            if total_pages <= page:
-                break
-
-            page += 1
-            # Throttle requests
-            await asyncio.sleep(CF_API_REQUEST_THROTTLE_SECONDS)
-
-    await aclient.aclose()
+    async with AsyncClient() as aclient:
+        await asyncio.gather(
+            *[
+                cf_data_api(
+                    httpx_client=aclient,
+                    api_url=api_url,
+                    affiliate_code=affiliate_code,
+                    division=int(x),
+                    entrant_list=entrant_list,
+                    scores_list=scores_list,
+                )
+                for x in CF_DIVISION_MAP
+            ],
+        )
 
     log.info("Downloaded %s entrants, %s scores", len(entrant_list), len(scores_list))
     return year, entrant_list, scores_list
@@ -81,16 +95,15 @@ async def process_cf_data(
     year, entrant_list, scores_list = await get_cf_data(affiliate_id, year)
 
     delete_score_stmt = delete(Score)
-    delete_athlete_stmt = delete(Athlete)
-
     await db_session.execute(delete_score_stmt)
-    await db_session.execute(delete_athlete_stmt)
     await db_session.commit()
 
     for entrant, scores in zip(entrant_list, scores_list, strict=True):
         entrant_model = CFEntrantInputModel.model_validate(entrant)
-        athlete = Athlete(**entrant_model.model_dump(), year=year)
-        db_session.add(athlete)
+        athlete = await Athlete.find(async_session=db_session, competitor_id=entrant_model.competitor_id)
+        if athlete is None:
+            athlete = Athlete(**entrant_model.model_dump(), year=year)
+            db_session.add(athlete)
 
         if scores:
             for score in scores:
@@ -137,8 +150,7 @@ async def apply_team_assignments(
     await db_session.commit()
 
     select_stmt = select(Athlete.name).where(Athlete.team_name == "Unassigned")
-    results = await db_session.execute(select_stmt)
-    log.info(results.scalars().all())
+    await db_session.execute(select_stmt)
 
 
 async def apply_ranks(
@@ -180,7 +192,6 @@ async def apply_attendance_scores(
                 attendance[row[0]] = [row[1].title()]
 
     for k, v in attendance.items():
-        log.info("Attendance event %s count %s", k, len(v))
         select_stmt = (
             select(Score.id)
             .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
@@ -194,8 +205,7 @@ async def apply_attendance_scores(
     await db_session.commit()
 
     select_stmt = select(Score.event_name, func.count()).where(Score.attendance_score > 0)
-    results = await db_session.execute(select_stmt)
-    log.info(results.scalars().all())
+    await db_session.execute(select_stmt)
 
 
 async def apply_judge_score(
@@ -224,10 +234,14 @@ async def apply_side_challenge_score(
     async with aiofiles.open(SIDE_CHALLENGE_FILEPATH) as file:
         async for row in AsyncReader(file):
             select_stmt = (
-                select(Score.id)
-                .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-                .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
-            ).limit(1)
+                (
+                    select(Score.id)
+                    .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+                    .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
+                )
+                .order_by(Athlete.team_leader.desc())
+                .limit(1)
+            )
             update_stmt = (
                 update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(side_challenge_score=row[2])
             )
@@ -242,10 +256,14 @@ async def apply_spirit_score(
     async with aiofiles.open(SPIRIT_FILEPATH) as file:
         async for row in AsyncReader(file):
             select_stmt = (
-                select(Score.id)
-                .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-                .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
-            ).limit(1)
+                (
+                    select(Score.id)
+                    .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+                    .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
+                )
+                .order_by(Athlete.team_leader.desc())
+                .limit(1)
+            )
             update_stmt = update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(spirit_score=row[2])
             await db_session.execute(update_stmt)
 
