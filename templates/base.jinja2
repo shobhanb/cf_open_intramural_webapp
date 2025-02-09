@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
+  <script src="/static/js/htmx.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-  <link href="{{ url_for('static', path='css/output.css') }}" rel="stylesheet" type="text/css" />
+  <link href="/static/css/output.css" rel="stylesheet" type="text/css" />
   <title>
     {% include "partials/title.jinja2" %}
   </title>
@@ -31,10 +31,10 @@
       {% include "partials/refresh_btn.jinja2" %}
       {# <div hx-trigger="load" hx-get="/ui/refresh_button" hx-swap="innerHTML"></div> #}
       <a class="" href="https://monkeyflagfitness.com/the-2025-monkey-flag-open/" target="_blank">
-        <img class="h-8 bg-base-100 p-1 m-1" src="{{ url_for('static', path='/images/monkeyflag_logo.png') }}" alt="" />
+        <img class="h-8 bg-base-100 p-1 m-1" src="/static/images/monkeyflag_logo.png" alt="" />
       </a>
       <a class="" href="https://games.crossfit.com/affiliate/31316" target="_blank">
-        <img class="h-8 bg-neutral p-1 m-1" src="{{ url_for('static', path='/images/cf_games_logo.svg') }}"
+        <img class="h-8 bg-neutral p-1 m-1" src="/static/images/cf_games_logo.svg"
           target="_blank" />
       </a>
     </div>
