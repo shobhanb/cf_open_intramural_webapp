@@ -32,6 +32,7 @@ async def get_team_scores_ordinal(
         context={
             "scores": scores,
             "overall_score": overall_score,
+            "event_name": EVENT_NAMES.get(ordinal),
         },
     )
 
@@ -50,6 +51,7 @@ async def get_leaderboard_ordinal(
         name="pages/leaderboard.jinja2",
         context={
             "leaderboard": leaderboard,
+            "event_name": EVENT_NAMES.get(ordinal),
         },
     )
 
@@ -68,5 +70,6 @@ async def get_athlete_scores(
         name="pages/athlete_scores.jinja2",
         context={
             "scores": scores,
+            "event_name": EVENT_NAMES.get(ordinal),
         },
     )
