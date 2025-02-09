@@ -12,7 +12,7 @@ from app.database.engine import session_manager
 from app.ui.template import templates
 from app.views import router
 
-RESET_DB = False
+RESET_DB = True
 
 
 @asynccontextmanager
