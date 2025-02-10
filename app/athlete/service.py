@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 
 from app.athlete.models import Athlete
 from app.cf_games.constants import AFFILIATE_ID, TEAM_LEADER_MAP, YEAR
@@ -32,12 +32,53 @@ async def get_athlete_teams_list(
     return [dict(x) for x in ret.mappings().all()]
 
 
+async def get_team_composition_dict(
+    db_session: db_dependency,
+) -> dict[str, list[dict[str, Any]]]:
+    stmt = (
+        select(
+            Athlete.team_name,
+            Athlete.gender,
+            Athlete.mf_age_category,
+            func.count().label("count"),
+        )
+        .group_by(
+            Athlete.gender,
+            Athlete.mf_age_category,
+        )
+        .order_by(
+            Athlete.team_name,
+            Athlete.mf_age_category,
+            Athlete.gender,
+        )
+    )
+    ret = await db_session.execute(stmt)
+    team_composition = {}
+    result = ret.mappings().all()
+    for row in result:
+        team_name = row.get("team_name")
+        if team_name in team_composition:
+            team_composition[team_name].append(row)
+        else:
+            team_composition[team_name] = [row]
+
+    return team_composition
+
+
 async def get_athlete_teams_dict(
     db_session: db_dependency,
 ) -> dict[str, list[str]]:
-    stmt = select(Athlete.name, Athlete.team_name, Athlete.team_leader).order_by(
+    stmt = select(
+        Athlete.name,
+        Athlete.team_name,
+        Athlete.team_leader,
+        Athlete.gender,
+        Athlete.mf_age_category,
+    ).order_by(
         Athlete.team_name,
         Athlete.team_leader.desc(),
+        Athlete.gender,
+        Athlete.mf_age_category,
         Athlete.name,
     )
     ret = await db_session.execute(stmt)

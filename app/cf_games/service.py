@@ -117,12 +117,12 @@ async def process_cf_data(
 
     await db_session.commit()
 
-    await apply_team_assignments(db_session=db_session)
+    # await apply_team_assignments(db_session=db_session)
     await apply_top3_score(db_session=db_session)
-    await apply_attendance_scores(db_session=db_session)
+    # await apply_attendance_scores(db_session=db_session)
     await apply_judge_score(db_session=db_session)
-    await apply_side_challenge_score(db_session=db_session)
-    await apply_spirit_score(db_session=db_session)
+    # await apply_side_challenge_score(db_session=db_session)
+    # await apply_spirit_score(db_session=db_session)
     await apply_total_score(db_session=db_session)
 
     return CFDataCountModel(

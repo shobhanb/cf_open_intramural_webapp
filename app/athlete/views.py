@@ -11,6 +11,7 @@ from app.athlete.service import (
     assign_athlete_to_team,
     get_athlete_teams_dict,
     get_athlete_teams_list,
+    get_team_composition_dict,
     get_team_names,
     rename_team,
 )
@@ -30,17 +31,21 @@ athlete_router = APIRouter()
 @athlete_router.get("/team_members", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def get_team_members(request: Request, db_session: db_dependency) -> Response:
     teams = await get_athlete_teams_dict(db_session=db_session)
+    team_composition = await get_team_composition_dict(db_session=db_session)
+    team_composition_totals = {k: sum([x.get("count", 0) for x in v]) for k, v in team_composition.items()}
     return templates.TemplateResponse(
         request=request,
         name="pages/team_members.jinja2",
         context={
             "teams": teams,
+            "team_composition": team_composition,
+            "team_composition_totals": team_composition_totals,
         },
     )
 
 
 @athlete_router.get("/assign_teams", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def get_assign_teams_page(request: Request, db_session: db_dependency) -> Response:
+async def get_manual_teams_assign_page(request: Request, db_session: db_dependency) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
@@ -48,7 +53,7 @@ async def get_assign_teams_page(request: Request, db_session: db_dependency) -> 
     teams = await get_athlete_teams_dict(db_session=db_session)
     return templates.TemplateResponse(
         request=request,
-        name="pages/assign_teams.jinja2",
+        name="pages/manual_team_assign.jinja2",
         context={
             "teams": teams,
         },
