@@ -1,11 +1,15 @@
 import logging
+from typing import Annotated
+from uuid import UUID
 
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Form, Request, Response, status
 from fastapi.responses import HTMLResponse
 
-from app.auth.exceptions import not_found_exception
+from app.athlete.service import get_team_names
 from app.cf_games.constants import EVENT_NAMES
 from app.database.dependencies import db_dependency
+from app.exceptions import not_found_exception
+from app.score.models import SideScore
 from app.score.service import get_all_athlete_scores, get_db_team_scores, get_leaderboard_scores, get_total_scores
 from app.ui.template import templates
 
@@ -71,5 +75,78 @@ async def get_athlete_scores(
         context={
             "scores": scores,
             "event_name": EVENT_NAMES.get(ordinal),
+        },
+    )
+
+
+@score_router.get("/side_scores", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def get_side_scores_page(
+    request: Request,
+    db_session: db_dependency,
+) -> Response:
+    side_scores = await SideScore.all(async_session=db_session)
+    teams = await get_team_names(db_session=db_session)
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/side_scores.jinja2",
+        context={
+            "side_scores": side_scores,
+            "teams": teams,
+        },
+    )
+
+
+@score_router.delete("/side_scores/{id_}", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def delete_side_score_id(
+    request: Request,
+    db_session: db_dependency,
+    id_: UUID,
+) -> Response:
+    side_score = await SideScore.get(async_session=db_session, id_=id_)
+    if side_score:
+        await side_score.delete(async_session=db_session)
+
+    side_scores = await SideScore.all(async_session=db_session)
+    teams = await get_team_names(db_session=db_session)
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/side_scores_table.jinja2",
+        context={
+            "side_scores": side_scores,
+            "teams": teams,
+        },
+    )
+
+
+@score_router.post("/side_scores", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def post_side_score_new(
+    request: Request,
+    db_session: db_dependency,
+    event_name: Annotated[str, Form()],
+    score_type: Annotated[str, Form()],
+    team_name: Annotated[str, Form()],
+) -> Response:
+    if event_name not in EVENT_NAMES.values():
+        raise not_found_exception()
+
+    side_score = await SideScore.find(
+        async_session=db_session,
+        event_name=event_name,
+        score_type=score_type,
+        team_name=team_name,
+    )
+    if not side_score:
+        side_score = SideScore(event_name=event_name, score_type=score_type, team_name=team_name)
+        db_session.add(side_score)
+        await db_session.commit()
+
+    side_scores = await SideScore.all(async_session=db_session)
+    teams = await get_team_names(db_session=db_session)
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/side_scores_table.jinja2",
+        context={
+            "side_scores": side_scores,
+            "teams": teams,
         },
     )

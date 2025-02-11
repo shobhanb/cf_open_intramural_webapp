@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Callable
 
 import uvicorn
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -11,7 +11,7 @@ from app.auth.service import add_item_to_header, create_access_token, verify_tok
 from app.database.base import Base
 from app.database.engine import session_manager
 from app.ui.template import templates
-from app.views import router
+from app.ui.views import router
 
 RESET_DB = False
 
@@ -37,8 +37,7 @@ async def health_check() -> dict:
     return {"status": "Ok"}
 
 
-@app.exception_handler(404)
-@app.exception_handler(401)
+@app.exception_handler(HTTPException)
 async def custom_404_handler(request: Request, __) -> Response:  # noqa: ANN001
     return await get_404(request=request)
 

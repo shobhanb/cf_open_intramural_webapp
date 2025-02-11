@@ -17,4 +17,5 @@ dependencies = [
     "pyjwt>=2.10.1",
     "rich>=13.9.4",
     "sqlalchemy>=2.0.37",
+    "jinja-partials>=0.2.1",
 ]

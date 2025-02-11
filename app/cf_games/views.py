@@ -3,11 +3,11 @@ import logging
 from fastapi import APIRouter, Request, status
 from fastapi.responses import RedirectResponse
 
-from app.auth.exceptions import unauthorised_exception
 from app.auth.service import authenticate_request
 from app.cf_games.constants import AFFILIATE_ID, YEAR
 from app.cf_games.service import process_cf_data
 from app.database.dependencies import db_dependency
+from app.exceptions import unauthorised_exception
 
 log = logging.getLogger("uvicorn.error")
 

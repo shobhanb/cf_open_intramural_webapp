@@ -3,9 +3,10 @@ from __future__ import annotations
 import asyncio
 import csv
 import logging
+from pathlib import Path
 
-from httpx import AsyncClient
-from sqlalchemy import delete, func, select, update
+from httpx import AsyncClient, HTTPError
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.athlete.models import Athlete
@@ -17,15 +18,14 @@ from app.cf_games.constants import (
     CF_LEADERBOARD_URL,
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
-    SIDE_CHALLENGE_FILEPATH,
+    SIDE_CHALLENGE_SCORE,
     SPIRIT_FILEPATH,
-    TEAM_ASSIGNMENTS_FILEPATH,
-    TEAM_LEADER_MAP,
+    SPIRIT_SCORE,
     TOP3_SCORE,
     YEAR,
 )
 from app.cf_games.schemas import CFDataCountModel, CFEntrantInputModel, CFScoreInputModel
-from app.score.models import Score
+from app.score.models import Score, SideScore
 
 log = logging.getLogger("uvicorn.error")
 
@@ -67,20 +67,24 @@ async def get_cf_data(affiliate_code: int, year: int) -> tuple[int, list[dict], 
 
     api_url = CF_LEADERBOARD_URL.replace("YYYY", str(year))
 
-    async with AsyncClient() as aclient:
-        await asyncio.gather(
-            *[
-                cf_data_api(
-                    httpx_client=aclient,
-                    api_url=api_url,
-                    affiliate_code=affiliate_code,
-                    division=int(x),
-                    entrant_list=entrant_list,
-                    scores_list=scores_list,
-                )
-                for x in CF_DIVISION_MAP
-            ],
-        )
+    try:
+        async with AsyncClient(timeout=10.0) as aclient:
+            await asyncio.gather(
+                *[
+                    cf_data_api(
+                        httpx_client=aclient,
+                        api_url=api_url,
+                        affiliate_code=affiliate_code,
+                        division=int(x),
+                        entrant_list=entrant_list,
+                        scores_list=scores_list,
+                    )
+                    for x in CF_DIVISION_MAP
+                ],
+            )
+
+    except HTTPError:
+        log.exception("HTTP Exception while getting CF data")
 
     log.info("Downloaded %s entrants, %s scores", len(entrant_list), len(scores_list))
     return year, entrant_list, scores_list
@@ -93,9 +97,7 @@ async def process_cf_data(
 ) -> CFDataCountModel:
     year, entrant_list, scores_list = await get_cf_data(affiliate_id, year)
 
-    delete_score_stmt = delete(Score)
-    await db_session.execute(delete_score_stmt)
-    await db_session.commit()
+    await Score.delete_all(async_session=db_session)
 
     for entrant, scores in zip(entrant_list, scores_list, strict=True):
         entrant_model = CFEntrantInputModel.model_validate(entrant)
@@ -107,22 +109,29 @@ async def process_cf_data(
         if scores:
             for score in scores:
                 score_model = CFScoreInputModel.model_validate(score)
-                event_score = Score(
-                    **score_model.model_dump(),
-                    athlete=athlete,
+                event_score = await Score.find(
+                    async_session=db_session,
+                    athlete_id=athlete.id,
+                    ordinal=score_model.ordinal,
                 )
+                if event_score:
+                    for var, value in vars(score_model).items():
+                        setattr(event_score, var, value) if value else None
+                else:
+                    event_score = Score(
+                        **score_model.model_dump(),
+                        athlete=athlete,
+                    )
                 if event_score.score > 0:
                     event_score.participation_score = PARTICIPATION_SCORE
                 db_session.add(event_score)
 
     await db_session.commit()
 
-    # await apply_team_assignments(db_session=db_session)
     await apply_top3_score(db_session=db_session)
     # await apply_attendance_scores(db_session=db_session)
     await apply_judge_score(db_session=db_session)
-    # await apply_side_challenge_score(db_session=db_session)
-    # await apply_spirit_score(db_session=db_session)
+    await apply_side_scores(db_session=db_session)
     await apply_total_score(db_session=db_session)
 
     return CFDataCountModel(
@@ -131,26 +140,6 @@ async def process_cf_data(
         entrant_count=len(entrant_list),
         score_count=len(scores_list),
     )
-
-
-async def apply_team_assignments(
-    db_session: AsyncSession,
-) -> None:
-    with open(TEAM_ASSIGNMENTS_FILEPATH) as file:
-        reader = csv.reader(file)
-        for row in reader:
-            name = row[0].title()
-            team_name = row[1]
-            team_leader = TEAM_LEADER_MAP.get(row[2], 0)
-            update_stmt = (
-                update(Athlete).where(Athlete.name == name).values(team_name=team_name, team_leader=team_leader)
-            )
-            await db_session.execute(update_stmt)
-
-    await db_session.commit()
-
-    select_stmt = select(Athlete.name).where(Athlete.team_name == "Unassigned")
-    await db_session.execute(select_stmt)
 
 
 async def apply_ranks(
@@ -184,7 +173,7 @@ async def apply_attendance_scores(
     db_session: AsyncSession,
 ) -> None:
     attendance = {}
-    with open(ATTENDANCE_FILEPATH) as file:
+    with Path(ATTENDANCE_FILEPATH).open() as file:  # noqa: ASYNC230
         reader = csv.reader(file)
         for row in reader:
             if row[0] in attendance:
@@ -229,33 +218,40 @@ async def apply_judge_score(
     await db_session.commit()
 
 
-async def apply_side_challenge_score(
+async def apply_side_scores(
     db_session: AsyncSession,
+    side_challenge_score: int = SIDE_CHALLENGE_SCORE,
+    spirit_score: int = SPIRIT_SCORE,
 ) -> None:
-    with open(SIDE_CHALLENGE_FILEPATH) as file:
-        reader = csv.reader(file)
-        for row in reader:
-            select_stmt = (
-                (
-                    select(Score.id)
-                    .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-                    .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
-                )
-                .order_by(Athlete.team_leader.desc())
-                .limit(1)
-            )
-            update_stmt = (
-                update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(side_challenge_score=row[2])
-            )
-            await db_session.execute(update_stmt)
+    side_scores = await SideScore.all(async_session=db_session)
 
-    await db_session.commit()
+    for side_score in side_scores:
+        select_stmt = (
+            (
+                select(Score)
+                .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+                .where((Score.event_name == side_score.event_name) & (Athlete.team_name == side_score.team_name))
+            )
+            .order_by(Athlete.team_leader.desc())
+            .limit(1)
+        )
+        result = await db_session.execute(select_stmt)
+        score = result.scalar_one()
+
+        if side_score.score_type == "side_challenge":
+            score.side_challenge_score = side_challenge_score
+            db_session.add(score)
+            await db_session.commit()
+        elif side_score.score_type == "spirit":
+            score.spirit_score = spirit_score
+            db_session.add(score)
+            await db_session.commit()
 
 
 async def apply_spirit_score(
     db_session: AsyncSession,
 ) -> None:
-    with open(SPIRIT_FILEPATH) as file:
+    with Path(SPIRIT_FILEPATH).open() as file:  # noqa: ASYNC230
         reader = csv.reader(file)
         for row in reader:
             select_stmt = (

@@ -20,6 +20,7 @@
           <th>Name</th>
           <th>Valid</th>
           <th>Team</th>
+          <th>TL</th>
           <th>Score</th>
           <th>Reps</th>
           <th>Time</th>
@@ -28,6 +29,7 @@
           <th>Top3</th>
           <th>Attendance</th>
           <th>Judge</th>
+          <th>Appreciation</th>
           <th>Side Challenge</th>
           <th>Spirit</th>
           <th>Total</th>
@@ -41,6 +43,7 @@
           <td>{{ athlete.get("name","") }}</td>
           <td>{{ athlete.get("valid","") }}</td>
           <td>{{ athlete.get("team_name", "") }}</td>
+          <td>{{ athlete.get("team_leader", "") }}</td>
           <td>{{ athlete.get("score_display", "") }}</td>
           <td>{{ athlete.get("reps", "") }}</td>
           <td>{{ athlete.get("time_ms", "") }}</td>
@@ -49,6 +52,7 @@
           <td>{{ athlete.get("top3_score", "") }}</td>
           <td>{{ athlete.get("attendance_score", "") }}</td>
           <td>{{ athlete.get("judge_score", "") }}</td>
+          <td>{{ athlete.get("appreciation_score", "") }}</td>
           <td>{{ athlete.get("side_challenge_score", "") }}</td>
           <td>{{ athlete.get("spirit_score", "") }}</td>
           <td>{{ athlete.get("total_score", "") }}</td>

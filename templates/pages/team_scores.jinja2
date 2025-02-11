@@ -11,7 +11,7 @@
       <thead>
         <tr>
           <th>Score</th>
-          {% for team in scores if team != "zz"%}
+          {% for team in scores %}
           <th>{{team}}</th>
           {% endfor %}
         </tr>
@@ -19,43 +19,49 @@
       <tbody>
         <tr>
           <td>Athlete Count</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("count",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Participation Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("participation",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Top 3 Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("top3_score",)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Attendance Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("attendance_score",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Judge Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("judge_score",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
+          <td>Appreciation Score</td>
+          {% for team in scores.values() %}
+          <td>{{team.get("appreciation_score",0)}}</td>
+          {% endfor %}
+        </tr>
+        <tr>
           <td>Side Challenge Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("side_challenge_score",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Spirit Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("spirit_score",0)}}</td>
           {% endfor %}
         </tr>
@@ -64,13 +70,13 @@
       <tfoot class="bg-base-300 font-bold">
         <tr>
           <td>{{ event_name }} Total Score</td>
-          {% for team in scores.values() if team.get("team_name")!= "zz" %}
+          {% for team in scores.values() %}
           <td>{{team.get("total_score",0)}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Intramural Overall Score</td>
-          {% for team in overall_score.values() if team.get("team_name") != "zz" %}
+          {% for team in overall_score.values() %}
           <td>{{team.get("overall_score",0)}}</td>
           {% endfor %}
         </tr>

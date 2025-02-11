@@ -2,13 +2,13 @@
 CF_LEADERBOARD_URL = "https://c3po.crossfit.com/api/leaderboards/v2/competitions/open/YYYY/leaderboards"
 
 
-YEAR = 2025
+YEAR = 2024
 AFFILIATE_ID = 31316
 AFFILIATE_NAME = "Crossfit MonkeyFlag"
 EVENT_NAMES = {
-    1: "25.1",
-    2: "25.2",
-    3: "25.3",
+    1: "24.1",
+    2: "24.2",
+    3: "24.3",
 }
 
 RENDER_CONTEXT = {

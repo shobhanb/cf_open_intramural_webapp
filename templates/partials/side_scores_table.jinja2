@@ -1,0 +1,51 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Score Type</th>
+            <th>Team</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in side_scores %}
+        <tr>
+            <td>{{ row.event_name }}</td>
+            <td>{{ row.score_type }}</td>
+            <td>{{ row.team_name }}</td>
+            <td>
+                <button hx-delete={{ "/side_scores/" ~ row.id }} hx-target="table" hx-swap="outerhtml"
+                    class="btn btn-primary">Remove</button>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                <select name="event_name" class=" w-full max-w-xs" required>
+                    <option disabled selected>Event</option>
+                    {% for event in info.event_names.values() %}
+                    <option>{{ event }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="score_type" class=" w-full max-w-xs" required>
+                    <option disabled selected>Score Type</option>
+                    <option value="side_challenge">Side Challenge</option>
+                    <option value="spirit">Spirit</option>
+                </select>
+            </td>
+            <td>
+                <select name="team_name" class=" w-full max-w-xs" required>
+                    <option disabled selected>Team</option>
+                    {% for team in teams %}
+                    <option>{{ team }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <button hx-post="/side_scores" hx-target="table" hx-swap="outerhtml" hx-include="closest tr"
+                    class="btn btn-primary">Add</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

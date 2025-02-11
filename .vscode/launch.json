@@ -11,7 +11,8 @@
             "request": "launch",
             "module": "uvicorn",
             "args": ["app.main:app", "--reload"],
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "jinja": true
         }
     ]
 }

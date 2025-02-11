@@ -16,10 +16,10 @@ from app.athlete.service import (
     random_assign_zz_athlete,
     rename_team,
 )
-from app.auth.exceptions import unauthorised_exception
 from app.auth.service import authenticate_request
 from app.cf_games.constants import TEAM_LEADER_REVERSE_MAP
 from app.database.dependencies import db_dependency
+from app.exceptions import unauthorised_exception
 from app.ui.template import templates
 
 log = logging.getLogger("uvicorn.error")
@@ -78,7 +78,7 @@ async def get_rename_teams_page(request: Request, db_session: db_dependency) -> 
 
 
 @athlete_router.get("/side_challenge_spirit", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def get_side_challenge_spirit_page(request: Request, db_session: db_dependency) -> Response:
+async def get_side_challenge_spirit_page(request: Request, _: db_dependency) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()

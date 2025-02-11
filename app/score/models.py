@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.cf_games.constants import EVENT_NAMES
 from app.database.base import Base
+from app.score.enums import ScoreType
 
 if TYPE_CHECKING:
     from app.athlete.models import Athlete
@@ -85,6 +86,7 @@ class Score(Base):
     top3_score: Mapped[int] = mapped_column(Integer, default=0)
     judge_score: Mapped[int] = mapped_column(Integer, default=0)
     attendance_score: Mapped[int] = mapped_column(Integer, default=0)
+    appreciation_score: Mapped[int] = mapped_column(Integer, default=0)
     side_challenge_score: Mapped[int] = mapped_column(Integer, default=0)
     spirit_score: Mapped[int] = mapped_column(Integer, default=0)
     total_score: Mapped[int] = mapped_column(Integer, default=0)
@@ -98,3 +100,12 @@ class Score(Base):
 
     # Relationships
     athlete: Mapped[Athlete] = relationship(back_populates="scores")
+
+
+class SideScore(Base):
+    __table_args__ = (UniqueConstraint("event_name", "score_type"),)
+
+    event_name: Mapped[str] = mapped_column(String)
+    score_type: Mapped[ScoreType] = mapped_column(Enum(ScoreType))
+    team_name: Mapped[str] = mapped_column(String)
+    score: Mapped[int] = mapped_column(Integer, default=10)
