@@ -16,10 +16,10 @@ if TYPE_CHECKING:
 def apply_mf_age_category(context: DefaultExecutionContext) -> str:
     age = context.get_current_parameters()["age"]
     if int(age) >= int(MF_MASTERS_AGE_CUTOFF):
-        return "Masters 55+"
+        return "3. Masters 55+"
     if int(age) >= int(MF_OPEN_AGE_CUTOFF):
-        return "Masters"
-    return "Open"
+        return "2. Masters"
+    return "1. Open"
 
 
 def apply_division_name(context: DefaultExecutionContext) -> str:

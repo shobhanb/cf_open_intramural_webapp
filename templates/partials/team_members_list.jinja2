@@ -1,0 +1,8 @@
+{% for team_name in teams %}
+<ul class="list flex-auto bg-base-100 rounded-box m-2 px-2 shadow-md">
+  <li class="p-2 mb-2 bg-base-300 rounded-box shadow-md text-center text-wrap">{{team_name}}</li>
+  {% for row in teams.get(team_name) %}
+  <li class="list-row text-center text-wrap pb-1">{{ row.get("name")}}</li>
+  {% endfor %}
+</ul>
+{% endfor %}

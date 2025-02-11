@@ -6,13 +6,14 @@ from typing import Annotated
 from fastapi import APIRouter, Form, Request, Response, status
 from fastapi.responses import HTMLResponse
 
+from app.athlete.models import Athlete
 from app.athlete.service import (
-    assign_athlete_team_role,
     assign_athlete_to_team,
     get_athlete_teams_dict,
     get_athlete_teams_list,
     get_team_composition_dict,
     get_team_names,
+    random_assign_zz_athlete,
     rename_team,
 )
 from app.auth.exceptions import unauthorised_exception
@@ -92,7 +93,27 @@ async def get_auto_team_assign_page(request: Request, db_session: db_dependency)
     )
 
 
-@athlete_router.post("/athlete_teams", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+@athlete_router.get(
+    "/athlete_team_assignment/{competitor_id}",
+    response_class=HTMLResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_athlete_team_assign_partial(competitor_id: int, request: Request, db_session: db_dependency) -> Response:
+    user = authenticate_request(request)
+    if not user:
+        raise unauthorised_exception()
+
+    athlete = await Athlete.find_or_raise(async_session=db_session, competitor_id=competitor_id)
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/athlete_team_assign_form.jinja2",
+        context={
+            "athlete": athlete,
+        },
+    )
+
+
+@athlete_router.post("/athlete_teams_tbody", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def get_athlete_teams_partial(
     request: Request,
     db_session: db_dependency,
@@ -119,36 +140,23 @@ async def get_athlete_teams_partial(
 async def put_assign_athlete_teams(
     request: Request,
     competitor_id: int,
-    team_name: Annotated[str, Form()],
+    team_name_new: Annotated[str, Form()],
+    tl_c: Annotated[str, Form()],
     db_session: db_dependency,
 ) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
 
-    await assign_athlete_to_team(db_session=db_session, competitor_id=competitor_id, team_name=team_name)
+    await assign_athlete_to_team(db_session=db_session, competitor_id=competitor_id, team_name=team_name_new, tl_c=tl_c)
 
-    return HTMLResponse(content=f"<td>{team_name}</td>")
-
-
-@athlete_router.put(
-    "/assign_athlete_team_leader/{competitor_id}",
-    response_class=HTMLResponse,
-    status_code=status.HTTP_200_OK,
-)
-async def put_assign_athlete_team_leader(
-    request: Request,
-    competitor_id: int,
-    tl_c: Annotated[str, Form()],
-    db_session: db_dependency,
-) -> HTMLResponse:
-    user = authenticate_request(request)
-    if not user:
-        raise unauthorised_exception()
-
-    await assign_athlete_team_role(db_session=db_session, competitor_id=competitor_id, tl_c=tl_c)
-
-    return HTMLResponse(content=f"<td>{tl_c}</td>")
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/done.jinja2",
+        context={
+            "url": "/assign_teams",
+        },
+    )
 
 
 @athlete_router.put("/rename_team/{team_name_current}", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
@@ -157,9 +165,37 @@ async def put_rename_team(
     team_name_current: str,
     team_name_new: Annotated[str, Form()],
     db_session: db_dependency,
-) -> None:
+) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
 
     await rename_team(db_session=db_session, team_name_current=team_name_current, team_name_new=team_name_new)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/done.jinja2",
+        context={
+            "url": "/rename_teams",
+        },
+    )
+
+
+@athlete_router.post("/auto_assign_teams", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def post_auto_assign_teams(
+    request: Request,
+    db_session: db_dependency,
+) -> Response:
+    user = authenticate_request(request)
+    if not user:
+        raise unauthorised_exception()
+
+    await random_assign_zz_athlete(db_session=db_session)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/done.jinja2",
+        context={
+            "url": "/team_members",
+        },
+    )

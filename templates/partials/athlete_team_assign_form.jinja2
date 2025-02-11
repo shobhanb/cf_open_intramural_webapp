@@ -1,0 +1,39 @@
+<div class="hero-content flex-col">
+
+  <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+    <div class="bg-base-200 rounded-md text-center">
+      <div class="text-4xl m-4 p-4 font-bold">{{ athlete.name }}</div>
+    </div>
+    <form hx-put="/assign_athlete_team/{{athlete.competitor_id}}" hx-target=".hero-content" hx-swap="outerHTML"
+      class="card-body">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Team</span>
+        </label>
+        <input type="text" value="{{athlete.team_name}}" name="team_name_new" id="team_name_new"
+          class="input input-bordered" required />
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">Athlete</span>
+          <input type="radio" name="tl_c" value="" class="radio" checked="checked" />
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">Team Leader</span>
+          <input type="radio" name="tl_c" value="TL" class="radio " />
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">Coach</span>
+          <input type="radio" name="tl_c" value="C" class="radio " />
+        </label>
+      </div>
+      <div class="form-control mt-6">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -7,17 +7,31 @@
   <div class="hero-content flex-col">
     <div class="text-center">
       <div class="text-4xl font-bold">Rename Teams</div>
-      <div class="text-xs mt-4">Type & press enter to change</div>
-      
     </div>
-    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div class="card-body">
-      {% for team in teams %}
-       <input type="text" name="team_name_new" hx-put="/rename_team/{{team}}" hx-trigger="keyup[key=='Enter']" hx-swap="none" class="input input-bordered w-full max-w-xs" placeholder="{{team}}"/>
-      {% endfor %}
+    <div class="card bg-base-100 w-full shadow-2xl">
+      <div class="card-body flex">
+        <div class="overflow-x-auto">
+          <table class="table">
+            <tbody>
+              {% for team in teams %}
+              <form class="form" hx-put="/rename_team/{{team}}" hx-target=".hero-content" hx-swap="outerHTML">
+                <tr>
+                  <td>{{team}}</td>
+                  <td>
+                    <input type="text" name="team_name_new" class="input input-bordered" required/>
+                  </td>
+                  <td>
+                    <button class="btn btn-primary">Submit</button>
+                  </td>
+                </tr>
+              </form>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 

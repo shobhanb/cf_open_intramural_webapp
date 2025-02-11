@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+import logging
+from itertools import product
+from random import choice
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select, text, update
 
 from app.athlete.models import Athlete
 from app.cf_games.constants import AFFILIATE_ID, TEAM_LEADER_MAP, YEAR
 from app.database.dependencies import db_dependency
+
+log = logging.getLogger("uvicorn.error")
 
 
 async def get_year_affiliate_athletes(
@@ -43,6 +48,7 @@ async def get_team_composition_dict(
             func.count().label("count"),
         )
         .group_by(
+            Athlete.team_name,
             Athlete.gender,
             Athlete.mf_age_category,
         )
@@ -98,21 +104,11 @@ async def assign_athlete_to_team(
     db_session: db_dependency,
     competitor_id: int,
     team_name: str,
-) -> None:
-    athlete = await Athlete.find(async_session=db_session, competitor_id=competitor_id)
-    if athlete:
-        athlete.team_name = team_name
-        db_session.add(athlete)
-        await db_session.commit()
-
-
-async def assign_athlete_team_role(
-    db_session: db_dependency,
-    competitor_id: int,
     tl_c: str,
 ) -> None:
     athlete = await Athlete.find(async_session=db_session, competitor_id=competitor_id)
     if athlete:
+        athlete.team_name = team_name
         athlete.team_leader = TEAM_LEADER_MAP.get(tl_c, 0)
         db_session.add(athlete)
         await db_session.commit()
@@ -135,3 +131,41 @@ async def rename_team(
     stmt = update(Athlete).where(Athlete.team_name == team_name_current).values(team_name=team_name_new)
     await db_session.execute(stmt)
     await db_session.commit()
+
+
+async def random_assign_zz_athlete(
+    db_session: db_dependency,
+) -> None:
+    genders = ["F", "M"]
+    age_categories = ["1. Open", "2. Masters", "3. Masters 55+"]
+
+    for gender, age_cat in product(*[genders, age_categories]):
+        while True:
+            # Get all assignable athletes for category
+            athlete_stmt = select(Athlete).where(
+                (Athlete.team_name == "zz") & (Athlete.gender == gender) & (Athlete.mf_age_category == age_cat),
+            )
+            result = await db_session.execute(athlete_stmt)
+            athletes = result.scalars().all()
+
+            if len(athletes) > 0:
+                # Randomly choose one athlete
+                athlete = choice(athletes)  # noqa: S311
+
+                # Pick team that should get a person next
+                select_team_stmt = (
+                    select(Athlete.team_name, func.count().label("count"))
+                    .where(Athlete.team_name != "zz")
+                    .group_by(Athlete.team_name)
+                    .order_by(text("count ASC"), Athlete.team_name)
+                ).limit(1)
+                result = await db_session.execute(select_team_stmt)
+                team = result.scalar()
+
+                log.info("Category %s-%s: Team %s: Assigning %s", gender, age_cat, team, athlete.name)
+                athlete.team_name = team
+                db_session.add(athlete)
+                await db_session.commit()
+
+            else:
+                break

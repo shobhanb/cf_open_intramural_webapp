@@ -1,5 +1,4 @@
-from fastapi import APIRouter, status
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter
 
 from app.athlete.views import athlete_router
 from app.auth.views import auth_router
@@ -15,8 +14,3 @@ router.include_router(cf_games_router)
 router.include_router(athlete_router)
 router.include_router(score_router)
 router.include_router(ui_router)
-
-
-@router.get("/", response_class=RedirectResponse, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
-async def team_scores_redirect() -> RedirectResponse:
-    return RedirectResponse(url="/team_members")

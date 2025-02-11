@@ -4,6 +4,7 @@ from typing import Callable
 
 import uvicorn
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.auth.service import add_item_to_header, create_access_token, verify_token
@@ -28,6 +29,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router)
+app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
 
 
 @app.get("/health")
