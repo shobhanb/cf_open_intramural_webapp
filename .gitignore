@@ -2,7 +2,7 @@
 *.db
 log/
 node_modules/
-static/images/
+static/assets/
 *.csv
 
 # Byte-compiled / optimized / DLL files
