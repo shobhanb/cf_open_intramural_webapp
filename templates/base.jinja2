@@ -44,13 +44,17 @@
     <div class="fixed inset-0 bg-base-100 opacity-25"></div>
     <nav @click.outside="show_nav = false"
       class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-base-300 border-r overflow-y-auto">
-      <div class="flex items-center mb-8">
+      <div class="flex flex-row justify-between mb-8">
         <button @click="show_nav = false">
           <svg class="h-6 w-6 cursor-pointer hover:text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
+        <a href="/">
+          <img class="h-6 w-6 cursor-pointer hover:text-primary" src="/static/assets/home-screen-svgrepo-com.svg"
+            alt="Home" />
+        </a>
       </div>
       {% include "partials/sidebar_menu.jinja2" %}
     </nav>

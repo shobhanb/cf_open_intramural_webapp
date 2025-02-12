@@ -9,12 +9,12 @@
     <tbody>
         {% for row in appreciation %}
         <tr>
-            <td>{{ row.get('event_name') }}</td>
-            <td>{{ row.get('name') }}</td>
-            <td>{{ row.get('score') }}</td>
+            <td>{{ row.event_name }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.score }}</td>
             <td>
-                <button hx-delete={{ "/appreciation/" ~ row.get('athlete_id') ~ "/" ~ row.get('ordinal') }} hx-target="table" hx-swap="outerhtml"
-                    class="btn btn-primary">Remove</button>
+                <button hx-delete={{ "/appreciation/" ~ row.athlete_id ~ "/" ~ row.ordinal }}
+                    hx-target="table" hx-swap="outerhtml" class="btn btn-primary">Remove</button>
             </td>
         </tr>
         {% endfor %}
@@ -31,13 +31,13 @@
                 <select name="athlete_id" class=" w-full max-w-xs" required>
                     <option disabled selected value="">Name</option>
                     {% for row in athletes %}
-                    <option value="{{ row.get('id') }}">{{ row.get('name') }}</option>
+                    <option value="{{ row.id }}">{{ row.name }}</option>
                     {% endfor %}
                 </select>
             </td>
-            <td>
-                <input name="score" class="input input-bordered" value="{{default_score}}" required />
-                
+            <td >
+                <input type="number" name="score" class="input input-bordered" value="{{default_score}}" required />
+
             </td>
             <td>
                 <button hx-post="/appreciation/" hx-target="table" hx-swap="outerhtml" hx-include="closest tr"
