@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="font-sans">
+<html lang="en" class="font-sans"
+  x-data="{ theme: localStorage.getItem('theme') || localStorage.setItem('theme', 'light') }" 
+  x-init="$watch('theme', val => localStorage.setItem('theme', val))"
+  x-bind:data-theme="theme">
 
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +11,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <link href="/static/css/output.css" rel="stylesheet" type="text/css" />
   <title>
-    {% include "partials/title.jinja2" %}
+    {{info.affiliate_name}} - Open {{info.year}} Intramural
   </title>
 </head>
 <!-- Navitgation component -->
@@ -24,17 +27,17 @@
     </div>
     <div class="flex flex-auto text-xl md:ml-1 hidden sm:flex font-bold hover:text-primary">
       <a href="/">
-        {% include "partials/title.jinja2" %}
+        {{info.affiliate_name}} - Open {{info.year}} Intramural
       </a>
     </div>
     <div class="flex flex-row justify-items-end align-center items-center">
       {% include "partials/refresh_btn.jinja2" %}
+      {% include "partials/light_dark_swap.jinja2" %}
       <a class="" href="https://monkeyflagfitness.com/the-2025-monkey-flag-open/" target="_blank">
         <img class="h-8 bg-base-100 p-1 m-1" src="/static/images/monkeyflag_logo.png" alt="" />
       </a>
       <a class="" href="https://games.crossfit.com/affiliate/31316" target="_blank">
-        <img class="h-8 bg-neutral p-1 m-1" src="/static/images/cf_games_logo.svg"
-          target="_blank" />
+        <img class="h-8 bg-neutral p-1 m-1" src="/static/images/cf_games_logo.svg" target="_blank" />
       </a>
     </div>
   </nav>
@@ -50,7 +53,7 @@
           </svg>
         </button>
       </div>
-      {% include "partials/menu.jinja2" %}
+      {% include "partials/sidebar_menu.jinja2" %}
     </nav>
   </div>
   <section class="container bg-base-100 max-h-full mx-auto p-3">

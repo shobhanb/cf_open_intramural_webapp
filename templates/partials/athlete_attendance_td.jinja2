@@ -1,0 +1,7 @@
+{% if ordinal|int in values %}
+<input hx-delete="/attendance/{{id}}/{{ordinal}}" hx-trigger="change" hx-include="closest td" hx-swap="none"
+    type="checkbox" class="checkbox" name="value" checked />
+{% else %}
+<input hx-post="/attendance/{{id}}/{{ordinal}}" hx-trigger="change" hx-include="closest td" hx-swap="none"
+    type="checkbox" class="checkbox" name="value" />
+{% endif %}

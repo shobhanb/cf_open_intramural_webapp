@@ -14,17 +14,15 @@
           <table class="table">
             <tbody>
               {% for team in teams %}
-              <form class="form" hx-put="/rename_team/{{team}}" hx-target=".hero-content" hx-swap="outerHTML">
                 <tr>
                   <td>{{team}}</td>
                   <td>
                     <input type="text" name="team_name_new" class="input input-bordered" required/>
                   </td>
                   <td>
-                    <button class="btn btn-primary">Submit</button>
+                    <button hx-put="/rename_team/{{team}}" hx-target=".hero-content" hx-swap="outerHTML"  hx-include="closest tr" class="btn btn-primary">Submit</button>
                   </td>
                 </tr>
-              </form>
               {% endfor %}
             </tbody>
           </table>

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Form, Request, Response, status
 from fastapi.responses import HTMLResponse
+from sqlalchemy import select
 
 from app.athlete.service import get_team_names
 from app.cf_games.constants import EVENT_NAMES
@@ -84,8 +85,10 @@ async def get_side_scores_page(
     request: Request,
     db_session: db_dependency,
 ) -> Response:
-    side_scores = await SideScore.all(async_session=db_session)
     teams = await get_team_names(db_session=db_session)
+    side_score_stmt = select(SideScore).order_by(SideScore.event_name, SideScore.score_type)
+    result = await db_session.execute(side_score_stmt)
+    side_scores = result.scalars().all()
     return templates.TemplateResponse(
         request=request,
         name="pages/side_scores.jinja2",
@@ -106,8 +109,11 @@ async def delete_side_score_id(
     if side_score:
         await side_score.delete(async_session=db_session)
 
-    side_scores = await SideScore.all(async_session=db_session)
     teams = await get_team_names(db_session=db_session)
+    side_score_stmt = select(SideScore).order_by(SideScore.event_name, SideScore.score_type)
+    result = await db_session.execute(side_score_stmt)
+    side_scores = result.scalars().all()
+
     return templates.TemplateResponse(
         request=request,
         name="partials/side_scores_table.jinja2",
@@ -126,22 +132,28 @@ async def post_side_score_new(
     score_type: Annotated[str, Form()],
     team_name: Annotated[str, Form()],
 ) -> Response:
-    if event_name not in EVENT_NAMES.values():
-        raise not_found_exception()
-
+    teams = await get_team_names(db_session=db_session)
     side_score = await SideScore.find(
         async_session=db_session,
         event_name=event_name,
         score_type=score_type,
         team_name=team_name,
     )
-    if not side_score:
+
+    if (
+        event_name in EVENT_NAMES.values()
+        and score_type in ["side_challenge", "spirit"]
+        and team_name in teams
+        and not side_score
+    ):
         side_score = SideScore(event_name=event_name, score_type=score_type, team_name=team_name)
         db_session.add(side_score)
         await db_session.commit()
 
-    side_scores = await SideScore.all(async_session=db_session)
-    teams = await get_team_names(db_session=db_session)
+    side_score_stmt = select(SideScore).order_by(SideScore.event_name, SideScore.score_type)
+    result = await db_session.execute(side_score_stmt)
+    side_scores = result.scalars().all()
+
     return templates.TemplateResponse(
         request=request,
         name="partials/side_scores_table.jinja2",

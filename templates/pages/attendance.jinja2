@@ -6,11 +6,11 @@
 
   <div class="hero-content flex-col">
     <div class="text-center">
-      <div class="text-4xl font-bold">Assign Teams</div>
+      <div class="text-4xl font-bold">Attendance</div>
     </div>
     <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
       <div class="card-body">
-        <form class="form-control" type="search" placeholder="Search Name" hx-post="/athlete_teams_tbody"
+        <form class="form-control" type="search" placeholder="Search Name" hx-post="/athlete_attendance"
           hx-trigger="input changed delay:300ms, keyup[key=='Enter'], load" hx-target="#search-results">
           <label class="label">
             <span class="label-text">Name</span>
@@ -24,8 +24,9 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Team</th>
-            <th>TL / C</th>
+            {% for event in info.event_names.values() %}
+            <th>{{ event }}</th>
+            {% endfor %}
           </tr>
         </thead>
         <tbody id="search-results">

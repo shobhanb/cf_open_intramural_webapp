@@ -10,9 +10,9 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.athlete.models import Athlete
+from app.attendance.models import Attendance
 from app.cf_games.constants import (
     AFFILIATE_ID,
-    ATTENDANCE_FILEPATH,
     ATTENDANCE_SCORE,
     CF_DIVISION_MAP,
     CF_LEADERBOARD_URL,
@@ -129,7 +129,7 @@ async def process_cf_data(
     await db_session.commit()
 
     await apply_top3_score(db_session=db_session)
-    # await apply_attendance_scores(db_session=db_session)
+    await apply_attendance_scores(db_session=db_session)
     await apply_judge_score(db_session=db_session)
     await apply_side_scores(db_session=db_session)
     await apply_total_score(db_session=db_session)
@@ -172,30 +172,17 @@ async def apply_top3_score(
 async def apply_attendance_scores(
     db_session: AsyncSession,
 ) -> None:
-    attendance = {}
-    with Path(ATTENDANCE_FILEPATH).open() as file:  # noqa: ASYNC230
-        reader = csv.reader(file)
-        for row in reader:
-            if row[0] in attendance:
-                attendance[row[0]].append(row[1].title())
-            else:
-                attendance[row[0]] = [row[1].title()]
+    select_stmt = select(Score.id).join_from(
+        Score,
+        Attendance,
+        (Score.athlete_id == Attendance.athlete_id) & (Score.ordinal == Attendance.ordinal),
+    )
+    update_stmt = (
+        update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(attendance_score=ATTENDANCE_SCORE)
+    )
 
-    for k, v in attendance.items():
-        select_stmt = (
-            select(Score.id)
-            .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-            .where((Score.event_name == k) & (Athlete.name.in_(v)))
-        )
-        update_stmt = (
-            update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(attendance_score=ATTENDANCE_SCORE)
-        )
-        await db_session.execute(update_stmt)
-
+    await db_session.execute(update_stmt)
     await db_session.commit()
-
-    select_stmt = select(Score.event_name, func.count()).where(Score.attendance_score > 0)
-    await db_session.execute(select_stmt)
 
 
 async def apply_judge_score(

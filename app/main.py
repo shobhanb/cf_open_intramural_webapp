@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Callable
 
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -37,6 +37,9 @@ async def health_check() -> dict:
     return {"status": "Ok"}
 
 
+@app.exception_handler(status.HTTP_404_NOT_FOUND)
+@app.exception_handler(status.HTTP_403_FORBIDDEN)
+@app.exception_handler(status.HTTP_401_UNAUTHORIZED)
 @app.exception_handler(HTTPException)
 async def custom_404_handler(request: Request, __) -> Response:  # noqa: ANN001
     return await get_404(request=request)

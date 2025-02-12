@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request, Response, status
 from fastapi.responses import HTMLResponse
 
 from app.athlete.views import athlete_router
+from app.attendance.views import attendance_router
 from app.auth.views import auth_router
 from app.cf_games.views import cf_games_router
 from app.score.views import score_router
@@ -32,3 +33,4 @@ router.include_router(auth_router)
 router.include_router(cf_games_router)
 router.include_router(athlete_router)
 router.include_router(score_router)
+router.include_router(attendance_router)

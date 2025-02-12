@@ -24,8 +24,6 @@ from app.ui.template import templates
 
 log = logging.getLogger("uvicorn.error")
 
-ADMIN = True
-
 athlete_router = APIRouter()
 
 
@@ -46,18 +44,14 @@ async def get_team_members(request: Request, db_session: db_dependency) -> Respo
 
 
 @athlete_router.get("/assign_teams", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def get_manual_teams_assign_page(request: Request, db_session: db_dependency) -> Response:
+async def get_manual_teams_assign_page(request: Request, _: db_dependency) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
 
-    teams = await get_athlete_teams_dict(db_session=db_session)
     return templates.TemplateResponse(
         request=request,
         name="pages/manual_team_assign.jinja2",
-        context={
-            "teams": teams,
-        },
     )
 
 

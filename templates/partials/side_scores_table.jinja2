@@ -21,7 +21,7 @@
         <tr>
             <td>
                 <select name="event_name" class=" w-full max-w-xs" required>
-                    <option disabled selected>Event</option>
+                    <option disabled selected value="">Event</option>
                     {% for event in info.event_names.values() %}
                     <option>{{ event }}</option>
                     {% endfor %}
@@ -29,14 +29,14 @@
             </td>
             <td>
                 <select name="score_type" class=" w-full max-w-xs" required>
-                    <option disabled selected>Score Type</option>
+                    <option disabled selected value="">Score Type</option>
                     <option value="side_challenge">Side Challenge</option>
                     <option value="spirit">Spirit</option>
                 </select>
             </td>
             <td>
                 <select name="team_name" class=" w-full max-w-xs" required>
-                    <option disabled selected>Team</option>
+                    <option disabled selected value="">Team</option>
                     {% for team in teams %}
                     <option>{{ team }}</option>
                     {% endfor %}
