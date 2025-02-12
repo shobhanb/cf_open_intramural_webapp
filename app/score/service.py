@@ -85,7 +85,7 @@ async def get_leaderboard_scores(
         .where((Score.ordinal == ordinal) & (Score.affiliate_rank <= 3))  # noqa: PLR2004
         .order_by(
             Athlete.gender,
-            Athlete.mf_age_category.desc(),
+            Athlete.mf_age_category.asc(),
             Score.affiliate_scaled,
             Score.scaled,
             Score.score.desc(),
@@ -136,7 +136,7 @@ async def get_all_athlete_scores(
         .where(Score.ordinal == ordinal)
         .order_by(
             Athlete.gender,
-            Athlete.mf_age_category.desc(),
+            Athlete.mf_age_category.asc(),
             Score.affiliate_scaled,
             Score.scaled,
             Score.score.desc(),
