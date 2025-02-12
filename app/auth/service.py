@@ -13,7 +13,9 @@ from app.settings import auth_settings
 
 
 def verify_admin_username_password(username: str, password: str) -> bool:
-    return bool(username == auth_settings.admin_username and password == auth_settings.admin_password)
+    return bool(
+        username.casefold() == auth_settings.admin_username.casefold() and password == auth_settings.admin_password,
+    )
 
 
 def create_access_token(
