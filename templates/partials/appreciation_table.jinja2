@@ -1,0 +1,48 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Name</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in appreciation %}
+        <tr>
+            <td>{{ row.get('event_name') }}</td>
+            <td>{{ row.get('name') }}</td>
+            <td>{{ row.get('score') }}</td>
+            <td>
+                <button hx-delete={{ "/appreciation/" ~ row.get('athlete_id') ~ "/" ~ row.get('ordinal') }} hx-target="table" hx-swap="outerhtml"
+                    class="btn btn-primary">Remove</button>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                <select name="ordinal" class=" w-full max-w-xs" required>
+                    <option disabled selected value="">Event</option>
+                    {% for ordinal, event in info.event_names.items() %}
+                    <option value="{{ ordinal }}">{{ event }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="athlete_id" class=" w-full max-w-xs" required>
+                    <option disabled selected value="">Name</option>
+                    {% for row in athletes %}
+                    <option value="{{ row.get('id') }}">{{ row.get('name') }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input name="score" class="input input-bordered" value="{{default_score}}" required />
+                
+            </td>
+            <td>
+                <button hx-post="/appreciation/" hx-target="table" hx-swap="outerhtml" hx-include="closest tr"
+                    class="btn btn-primary">Add</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

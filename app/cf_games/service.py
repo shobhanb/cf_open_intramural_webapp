@@ -9,6 +9,7 @@ from httpx import AsyncClient, HTTPError
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.appreciation.models import Appreciation
 from app.athlete.models import Athlete
 from app.attendance.models import Attendance
 from app.cf_games.constants import (
@@ -132,6 +133,7 @@ async def process_cf_data(
     await apply_top3_score(db_session=db_session)
     await apply_attendance_scores(db_session=db_session)
     await apply_judge_score(db_session=db_session)
+    await apply_appreciation_score(db_session=db_session)
     await apply_side_scores(db_session=db_session)
     await apply_total_score(db_session=db_session)
 
@@ -206,6 +208,23 @@ async def apply_judge_score(
     await db_session.commit()
 
 
+async def apply_appreciation_score(
+    db_session: AsyncSession,
+) -> None:
+    appreciations = await Appreciation.find_all(async_session=db_session)
+
+    for appreciation in appreciations:
+        score = await Score.find(
+            async_session=db_session,
+            athlete_id=appreciation.athlete_id,
+            ordinal=appreciation.ordinal,
+        )
+        if score:
+            score.appreciation_score = appreciation.score
+            db_session.add(score)
+            await db_session.commit()
+
+
 async def apply_side_scores(
     db_session: AsyncSession,
     side_challenge_score: int = SIDE_CHALLENGE_SCORE,
@@ -263,8 +282,9 @@ async def apply_total_score(
     update_stmt = update(Score).values(
         total_score=Score.participation_score
         + Score.top3_score
-        + Score.judge_score
         + Score.attendance_score
+        + Score.judge_score
+        + Score.appreciation_score
         + Score.side_challenge_score
         + Score.spirit_score,
     )

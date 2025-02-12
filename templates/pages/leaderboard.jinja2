@@ -23,14 +23,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for athlete in leaderboard[category]  %} <tr>
-          <td>{{ athlete.get("affiliate_scaled","") }}</td>
-          <td>{{ athlete.get("affiliate_rank","") }}</td>
-          <td>{{ athlete.get("name","") }}</td>
-          <td>{{ athlete.get("team_name", "") }}</td>
-          <td>{{ athlete.get("score_display", "") }}</td>
-          </tr>
-          {% endfor %}
+        {% for athlete in leaderboard[category] %} <tr>
+          <td>{{ athlete.affiliate_scaled }}</td>
+          <td>{{ athlete.affiliate_rank }}</td>
+          <td>{{ athlete.name }}</td>
+          <td>{{ athlete.team_name }}</td>
+          <td>{{ athlete.score_display }}</td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

@@ -1,0 +1,22 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+
+
+<div class="hero flex flex-col sm:flex-row justify-evenly">
+
+  <div class="hero-content flex-col">
+    <div class="text-center">
+      <div class="text-4xl font-bold">Assign Appreciation Scores</div>
+    </div>
+    <div class="card bg-base-100 w-full shadow-2xl">
+      <div class="card-body flex">
+        <div class="overflow-x-auto">
+          {% include "partials/appreciation_table.jinja2" %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

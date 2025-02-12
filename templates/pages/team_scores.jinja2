@@ -20,49 +20,49 @@
         <tr>
           <td>Athlete Count</td>
           {% for team in scores.values() %}
-          <td>{{team.get("count",0)}}</td>
+          <td>{{team.count}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Participation Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("participation",0)}}</td>
+          <td>{{team.participation}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Top 3 Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("top3_score",)}}</td>
+          <td>{{team.top3_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Attendance Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("attendance_score",0)}}</td>
+          <td>{{team.attendance_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Judge Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("judge_score",0)}}</td>
+          <td>{{team.judge_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Appreciation Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("appreciation_score",0)}}</td>
+          <td>{{team.appreciation_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Side Challenge Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("side_challenge_score",0)}}</td>
+          <td>{{team.side_challenge_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Spirit Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("spirit_score",0)}}</td>
+          <td>{{team.spirit_score}}</td>
           {% endfor %}
         </tr>
 
@@ -71,13 +71,13 @@
         <tr>
           <td>{{ event_name }} Total Score</td>
           {% for team in scores.values() %}
-          <td>{{team.get("total_score",0)}}</td>
+          <td>{{team.total_score}}</td>
           {% endfor %}
         </tr>
         <tr>
           <td>Intramural Overall Score</td>
           {% for team in overall_score.values() %}
-          <td>{{team.get("overall_score",0)}}</td>
+          <td>{{team.overall_score}}</td>
           {% endfor %}
         </tr>
       </tfoot>

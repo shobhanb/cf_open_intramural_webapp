@@ -1,10 +1,11 @@
 {% for athlete in athlete_teams %}
 <tr>
-    <td>{{ athlete.get("name")}} </td>
-    <td>{{ athlete.get("team_name")}} </td>
-    <td>{{ athlete.get("tl_c")}} </td>
+    <td>{{ athlete.name}} </td>
+    <td>{{ athlete.team_name}} </td>
+    <td>{{ athlete.tl_c}} </td>
     <td>
-        <button hx-get="/athlete_team_assignment/{{ athlete.get('competitor_id') }}" hx-target=".hero-content" hx-swap="outerHTML" class="btn btn-xs hover:btn-primary">Edit</button>
+        <button hx-get="/athlete_team_assignment/{{ athlete.competitor_id }}" hx-target=".hero-content"
+            hx-swap="outerHTML" class="btn btn-xs hover:btn-primary">Edit</button>
     </td>
 </tr>
 {% endfor %}

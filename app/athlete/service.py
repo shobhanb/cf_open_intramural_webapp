@@ -11,6 +11,7 @@ from sqlalchemy import func, select, text, update
 from app.athlete.models import Athlete
 from app.cf_games.constants import AFFILIATE_ID, TEAM_LEADER_MAP, YEAR
 from app.database.dependencies import db_dependency
+from app.score.models import SideScore
 
 log = logging.getLogger("uvicorn.error")
 
@@ -128,8 +129,12 @@ async def rename_team(
     team_name_current: str,
     team_name_new: str,
 ) -> None:
-    stmt = update(Athlete).where(Athlete.team_name == team_name_current).values(team_name=team_name_new)
-    await db_session.execute(stmt)
+    athlete_update_stmt = update(Athlete).where(Athlete.team_name == team_name_current).values(team_name=team_name_new)
+    await db_session.execute(athlete_update_stmt)
+    side_score_update_stmt = (
+        update(SideScore).where(SideScore.team_name == team_name_current).values(team_name=team_name_new)
+    )
+    await db_session.execute(side_score_update_stmt)
     await db_session.commit()
 
 

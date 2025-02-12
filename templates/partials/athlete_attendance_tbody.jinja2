@@ -1,6 +1,6 @@
 {% for id, values in attendance.items() %}
 <tr>
-    <td>{{ values.get("name") }} </td>
+    <td>{{ values.name }} </td>
     {% for ordinal in info.event_names %}
     <td>
         {{ render_partial("partials/athlete_attendance_td.jinja2", id=id, ordinal=ordinal, values=values) }}
