@@ -16,6 +16,7 @@ from app.cf_games.constants import (
     ATTENDANCE_SCORE,
     CF_DIVISION_MAP,
     CF_LEADERBOARD_URL,
+    HTTPX_TIMEOUT,
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
     SIDE_CHALLENGE_SCORE,
@@ -68,7 +69,7 @@ async def get_cf_data(affiliate_code: int, year: int) -> tuple[int, list[dict], 
     api_url = CF_LEADERBOARD_URL.replace("YYYY", str(year))
 
     try:
-        async with AsyncClient(timeout=10.0) as aclient:
+        async with AsyncClient(timeout=HTTPX_TIMEOUT) as aclient:
             await asyncio.gather(
                 *[
                     cf_data_api(
@@ -84,7 +85,7 @@ async def get_cf_data(affiliate_code: int, year: int) -> tuple[int, list[dict], 
             )
 
     except HTTPError:
-        log.exception("HTTP Exception while getting CF data")
+        log.warning("HTTP Exception while getting CF data")
 
     log.info("Downloaded %s entrants, %s scores", len(entrant_list), len(scores_list))
     return year, entrant_list, scores_list
