@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
+from uuid import UUID
 
 from sqlalchemy import select
 
@@ -13,7 +15,7 @@ log = logging.getLogger("uvicorn.error")
 
 async def get_athlete_attendance_data(
     db_session: db_dependency,
-) -> dict[str, dict[str, bool]]:
+) -> dict[UUID, dict[Any, Any]]:
     stmt = (
         select(Athlete.name, Athlete.id, Attendance.ordinal, Attendance.event_name)
         .join_from(

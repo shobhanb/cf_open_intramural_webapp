@@ -32,17 +32,22 @@ async def get_attendance_page(request: Request, _: db_dependency) -> Response:
 
 
 @attendance_router.post("/athlete_attendance", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def get_athlete_attendance_table(request: Request, db_session: db_dependency) -> Response:
+async def get_athlete_attendance_table(
+    request: Request,
+    db_session: db_dependency,
+    name: Annotated[str, Form()],
+) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
 
     attendance = await get_athlete_attendance_data(db_session=db_session)
+    filtered_attendance = {k: v for k, v in attendance.items() if name.casefold() in v.get("name", "").casefold()}
     return templates.TemplateResponse(
         request=request,
         name="partials/athlete_attendance_tbody.jinja2",
         context={
-            "attendance": attendance,
+            "attendance": filtered_attendance,
         },
     )
 
