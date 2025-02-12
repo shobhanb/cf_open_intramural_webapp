@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="font-sans"
-  x-data="{ theme: localStorage.getItem('theme') || localStorage.setItem('theme', 'light') }" 
-  x-init="$watch('theme', val => localStorage.setItem('theme', val))"
-  x-bind:data-theme="theme">
+  x-data="{ theme: localStorage.getItem('theme') || localStorage.setItem('theme', 'light') }"
+  x-init="$watch('theme', val => localStorage.setItem('theme', val))" x-bind:data-theme="theme">
 
 <head>
   <meta charset="UTF-8" />
@@ -34,10 +33,10 @@
       {% include "partials/refresh_btn.jinja2" %}
       {% include "partials/light_dark_swap.jinja2" %}
       <a class="" href="https://monkeyflagfitness.com/the-2025-monkey-flag-open/" target="_blank">
-        <img class="h-8 bg-base-100 p-1 m-1" src="/static/images/monkeyflag_logo.png" alt="" />
+        <img class="h-8 bg-base-100 p-1 m-1" src="/static/images/monkeyflag_logo.png" alt="Monkey Flag" />
       </a>
       <a class="" href="https://games.crossfit.com/affiliate/31316" target="_blank">
-        <img class="h-8 bg-neutral p-1 m-1" src="/static/images/cf_games_logo.svg" target="_blank" />
+        <img class="h-8 bg-neutral p-1 m-1" src="/static/images/cf_games_logo.svg" target="_blank" alt="Crossfit" />
       </a>
     </div>
   </nav>
