@@ -97,7 +97,7 @@ async def get_leaderboard_scores(
     result = ret.mappings().all()
     leaderboard = {}
     for row in result:
-        category = row.get("gender", "") + "-" + row.get("mf_age_category", "")
+        category = row.get("mf_age_category", "") + "-" + row.get("gender", "")
         if category in leaderboard:
             leaderboard[category].append(row)
         else:
@@ -148,7 +148,7 @@ async def get_all_athlete_scores(
     result = ret.mappings().all()
     leaderboard = {}
     for row in result:
-        category = row.get("gender", "") + "-" + row.get("mf_age_category", "")
+        category = row.get("mf_age_category", "") + "-" + row.get("gender", "")
         if category in leaderboard:
             leaderboard[category].append(row)
         else:
