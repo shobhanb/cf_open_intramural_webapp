@@ -1,4 +1,4 @@
-RX_PREFS = ["RX", "Scaled", "Foundations", "RX/Scaled - not sure", "Scaled/Foundations - not sure"]
+RX_PREFS = ["RX", "Scaled", "Foundations", "RX/Scaled", "Scaled/Foundations"]
 TIME_PREFS = [
     "Fri 5pm",
     "Fri 6pm",
