@@ -14,7 +14,7 @@
             <td>{{ row.score }}</td>
             <td>
                 <div hx-delete={{ "/appreciation/" ~ row.athlete_id ~ "/" ~ row.ordinal }} hx-target="table"
-                    hx-swap="outerhtml" class="cursor-pointer">
+                    hx-swap="outerHTML" class="cursor-pointer">
                     <svg class="h-6 w-6" fill="#000000" version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 32 32"
                         xml:space="preserve">
@@ -53,7 +53,7 @@
                 <input type="number" name="score" class="w-8" value="{{default_score}}" required />
             </td>
             <td>
-                <div hx-post="/appreciation" hx-target="table" hx-swap="outerhtml" hx-include="closest tr"
+                <div hx-post="/appreciation" hx-target="table" hx-swap="outerHTML" hx-include="closest tr"
                     class="cursor-pointer">
                     <svg class="h-6 w-6" width="800px" height="800px" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">

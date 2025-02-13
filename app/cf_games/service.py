@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.appreciation.models import Appreciation
 from app.athlete.models import Athlete
+from app.athlete_prefs.service import random_assign_athlete_prefs
 from app.attendance.models import Attendance
 from app.cf_games.constants import (
     AFFILIATE_ID,
@@ -136,6 +137,7 @@ async def process_cf_data(
     await apply_appreciation_score(db_session=db_session)
     await apply_side_scores(db_session=db_session)
     await apply_total_score(db_session=db_session)
+    await random_assign_athlete_prefs(db_session=db_session)
 
     return CFDataCountModel(
         year=year,

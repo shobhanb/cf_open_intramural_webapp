@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 
 from app.appreciation.views import appreciation_router
 from app.athlete.views import athlete_router
+from app.athlete_prefs.views import athlete_prefs_router
 from app.attendance.views import attendance_router
 from app.auth.views import auth_router
 from app.cf_games.views import cf_games_router
@@ -36,3 +37,4 @@ router.include_router(athlete_router)
 router.include_router(score_router)
 router.include_router(attendance_router)
 router.include_router(appreciation_router)
+router.include_router(athlete_prefs_router)
