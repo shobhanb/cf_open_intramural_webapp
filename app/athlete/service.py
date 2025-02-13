@@ -144,7 +144,7 @@ async def random_assign_zz_athlete(
     genders = ["F", "M"]
     age_categories = ["1. Open", "2. Masters", "3. Masters 55+"]
 
-    for gender, age_cat in product(*[genders, age_categories]):
+    for age_cat, gender in product(*[age_categories, genders]):
         while True:
             # Get all assignable athletes for category
             athlete_stmt = select(Athlete).where(
