@@ -84,8 +84,6 @@ async def get_athlete_teams_dict(
     ).order_by(
         Athlete.team_name,
         Athlete.team_leader.desc(),
-        Athlete.gender,
-        Athlete.mf_age_category,
         Athlete.name,
     )
     ret = await db_session.execute(stmt)
