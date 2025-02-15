@@ -62,19 +62,49 @@ async def post_create_new_attendance_record(
     db_session: db_dependency,
     athlete_id: UUID,
     ordinal: int,
-    value: Annotated[bool, Form()],
-) -> None:
+) -> Response:
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
 
-    if value:
-        # Add
-        attendance = await Attendance.find(async_session=db_session, athlete_id=athlete_id, ordinal=ordinal)
-        if not attendance:
-            attendance = await Attendance(athlete_id=athlete_id, ordinal=ordinal).save(async_session=db_session)
-    else:
-        # Delete
-        attendance = await Attendance.find(async_session=db_session, athlete_id=athlete_id, ordinal=ordinal)
-        if attendance:
-            await attendance.delete(async_session=db_session)
+    attendance = await Attendance.find(async_session=db_session, athlete_id=athlete_id, ordinal=ordinal)
+    if not attendance:
+        await Attendance(athlete_id=athlete_id, ordinal=ordinal).save(async_session=db_session)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/athlete_attendance_td_delete.jinja2",
+        context={
+            "id": athlete_id,
+            "ordinal": ordinal,
+        },
+    )
+
+
+@attendance_router.delete(
+    "/attendance/{athlete_id}/{ordinal}",
+    response_class=HTMLResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def delete_attendance_record(
+    request: Request,
+    db_session: db_dependency,
+    athlete_id: UUID,
+    ordinal: int,
+) -> Response:
+    user = authenticate_request(request)
+    if not user:
+        raise unauthorised_exception()
+
+    attendance = await Attendance.find(async_session=db_session, athlete_id=athlete_id, ordinal=ordinal)
+    if attendance:
+        await attendance.delete(async_session=db_session)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/athlete_attendance_td_post.jinja2",
+        context={
+            "id": athlete_id,
+            "ordinal": ordinal,
+        },
+    )

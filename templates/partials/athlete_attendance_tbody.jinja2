@@ -3,7 +3,11 @@
     <td>{{ values.name }} </td>
     {% for ordinal in info.event_names %}
     <td>
-        {{ render_partial("partials/athlete_attendance_td.jinja2", id=id, ordinal=ordinal, values=values) }}
+        {% if ordinal|int in values %}
+        {{ render_partial("partials/athlete_attendance_td_delete.jinja2", id=id, ordinal=ordinal)}}
+        {% else %}
+        {{ render_partial("partials/athlete_attendance_td_post.jinja2", id=id, ordinal=ordinal)}}
+        {% endif %}
     </td>
     {% endfor %}
 </tr>
