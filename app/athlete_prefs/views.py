@@ -11,6 +11,8 @@ from sqlalchemy import delete, select, update
 from app.athlete.models import Athlete
 from app.athlete_prefs.constants import RX_PREFS, TIME_PREFS
 from app.athlete_prefs.models import AthleteRXPref, AthleteTimePref
+from app.athlete_prefs.schemas import AthletePrefsModel
+from app.athlete_prefs.service import get_athlete_prefs_data_dump
 from app.database.dependencies import db_dependency
 from app.exceptions import not_found_exception
 from app.ui.template import templates
@@ -127,3 +129,11 @@ async def put_change_athlete_time_pref(
             "allowed_times": TIME_PREFS,
         },
     )
+
+
+@athlete_prefs_router.get("/athlete_prefs/data")
+async def get_athlete_prefs_download(
+    db_session: db_dependency,
+) -> list[AthletePrefsModel]:
+    prefs = await get_athlete_prefs_data_dump(db_session=db_session)
+    return [AthletePrefsModel.model_validate(x) for x in prefs]

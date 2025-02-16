@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.athlete.models import Athlete
-from app.athlete_prefs.constants import RX_PREFS, TIME_PREFS, TIME_PREFS_COUNT
+from app.athlete_prefs.constants import RX_PREFS, TIME_PREFS
 from app.athlete_prefs.models import AthleteRXPref, AthleteTimePref
 
 log = logging.getLogger("uvicorn.error")
@@ -52,7 +52,6 @@ async def random_assign_athlete_prefs(
     db_session: AsyncSession,
     rx_prefs: list[str] = RX_PREFS,
     time_prefs: list[str] = TIME_PREFS,
-    time_prefs_count: int = TIME_PREFS_COUNT,
 ) -> None:
     rx_pref_stmt = select(AthleteRXPref.athlete_id)
     missing_time_stmt = select(Athlete.id).where(Athlete.id.not_in(rx_pref_stmt.scalar_subquery()))
@@ -77,3 +76,30 @@ async def random_assign_athlete_prefs(
             db_session.add(time_pref)
 
     await db_session.commit()
+
+
+async def get_athlete_prefs_data_dump(db_session: AsyncSession) -> list[dict[str, Any]]:
+    rx_pref_stmt = (
+        select(
+            Athlete.name,
+            AthleteRXPref.rx_pref,
+            AthleteTimePref.preference_nbr,
+            AthleteTimePref.preference,
+        )
+        .join_from(
+            Athlete,
+            AthleteRXPref,
+            Athlete.id == AthleteRXPref.athlete_id,
+        )
+        .join_from(
+            Athlete,
+            AthleteTimePref,
+            Athlete.id == AthleteTimePref.athlete_id,
+        )
+        .order_by(Athlete.name, AthleteTimePref.preference_nbr)
+    )
+
+    ret = await db_session.execute(rx_pref_stmt)
+    results = ret.mappings().all()
+
+    return [dict(x) for x in results]
