@@ -82,9 +82,12 @@ async def get_athlete_prefs_data_dump(db_session: AsyncSession) -> list[dict[str
     rx_pref_stmt = (
         select(
             Athlete.name,
+            Athlete.mf_age_category,
+            Athlete.team_name,
             AthleteRXPref.rx_pref,
             AthleteTimePref.preference_nbr,
             AthleteTimePref.preference,
+            AthleteTimePref.updated_at,
         )
         .join_from(
             Athlete,
