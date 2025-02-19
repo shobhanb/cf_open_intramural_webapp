@@ -1,6 +1,6 @@
 {% if "rjtc_admin" in request.headers %}
-<div x-data="{ show_spinner: false }">
-    <span x-show="show_spinner" class="loading loading-spinner text-primary">Loading</span>
-    <a @click="show_spinner = true" class="btn btn-ghost hover:text-primary" href="/refresh">CF Open Refresh</a>
+<div x-data="{ show_spinner: false }" class="flex flex-row">
+    <div x-show="show_spinner" class="loading loading-spinner text-primary"></div>
+    <a @click="show_spinner = true" class="btn btn-ghost hover:text-primary" href="/refresh">Refresh</a>
 </div>
 {% endif %}

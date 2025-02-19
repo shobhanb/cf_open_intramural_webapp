@@ -7,11 +7,17 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 
 from app.athlete.service import get_team_names
-from app.cf_games.constants import EVENT_NAMES
+from app.cf_games.constants import EVENT_NAMES, TEAM_LOGOS
 from app.database.dependencies import db_dependency
 from app.exceptions import not_found_exception
 from app.score.models import SideScore
-from app.score.service import get_all_athlete_scores, get_db_team_scores, get_leaderboard_scores, get_total_scores
+from app.score.service import (
+    get_all_athlete_scores,
+    get_db_team_scores,
+    get_leaderboard_scores,
+    get_team_name_max_score,
+    get_total_scores,
+)
 from app.ui.template import templates
 
 log = logging.getLogger("uvicorn.error")
@@ -160,5 +166,22 @@ async def post_side_score_new(
         context={
             "side_scores": side_scores,
             "teams": teams,
+        },
+    )
+
+
+@score_router.get("/leading_teams_imgs", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def get_leading_teams_imgs(
+    request: Request,
+    db_sesion: db_dependency,
+) -> Response:
+    leading_teams = await get_team_name_max_score(db_session=db_sesion)
+    leading_teams_logos = [TEAM_LOGOS.get(x) for x in leading_teams]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/leading_teams.jinja2",
+        context={
+            "leading_logos": leading_teams_logos,
         },
     )

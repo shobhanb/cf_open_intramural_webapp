@@ -154,3 +154,27 @@ async def get_all_athlete_scores(
         else:
             leaderboard[category] = [row]
     return leaderboard
+
+
+async def get_team_name_max_score(db_session: AsyncSession) -> list[str]:
+    total_score_stmt = (
+        select(
+            Athlete.team_name,
+            func.sum(Score.total_score).label("overall_score"),
+        )
+        .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+        .group_by(Athlete.team_name)
+        .order_by(Athlete.team_name)
+    )
+
+    ret = await db_session.execute(total_score_stmt)
+    result = ret.mappings().all()
+
+    teams = [row["team_name"] for row in result]
+    scores = [row["overall_score"] for row in result]
+
+    if len(teams) == 0:
+        return []
+
+    max_score = max(scores)
+    return [team for team, score in zip(teams, scores, strict=True) if score == max_score]

@@ -1,6 +1,12 @@
 {% extends "base.jinja2" %}
 
 {% block content %}
+<div class="grid grid-cols-5 grid-rows-1 gap-1">
+  {% for team_name, logo in team_logos.items() %}
+  <img class="object-scale-down border rounded-md" src="{{ logo }}" title="{{ team_name }}" />
+  {% endfor %}
+</div>
+<div class="divider"></div>
 <div class="grid grid-cols-2 gap-0">
   <img class="object-scale-down" src="/static/assets/mf_open_scoresheet_cropped_1280.jpg" />
   <img class="object-scale-down" src="/static/assets/mf_t_pullup_cropped_1280.jpg" />

@@ -16,6 +16,13 @@ RENDER_CONTEXT = {
     "affiliate_name": AFFILIATE_NAME,
     "event_names": EVENT_NAMES,
 }
+TEAM_LOGOS = {
+    "1. Toes Too Far": "/static/assets/Toes too far.JPG",
+    "2. The Wodfathers": "/static/assets/WODFathers.JPG",
+    "3. Barbellgaonkar": "/static/assets/Barbellgaonkar.JPG",
+    "4. Ripped Rascals": "/static/assets/Ripped Rascals.JPG",
+    "5. Rowdy Repchicks": "/static/assets/Rowdy Repchicks.JPG",
+}
 
 TEAM_LEADER_MAP = {
     "TL": 2,

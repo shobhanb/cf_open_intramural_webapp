@@ -6,10 +6,10 @@
     Team Composition
   </div>
   <div class="overflow-auto">
-    <div class="flex flex-col sm:flex-row justify-evenly ">
+    <div class="flex flex-col md:flex-row justify-evenly ">
       {% for team_name in team_composition %}
       <ul class="list flex-auto bg-base-100 rounded-box m-2 p-2 shadow-md">
-        <li class="p-2 m-2 bg-base-300 rounded-box shadow-md text-center text-wrap">{{team_name}}</li>
+        <li class="p-2 m-2 bg-base-300 rounded-box shadow-md text-center">{{team_name}}</li>
         {% for row in team_composition.get(team_name) %}
         <li class="list-row text-center text-wrap p-1">{{ row.mf_age_category+ "-" + row.gender + " : " +
           row.count|string }}</li>
@@ -17,7 +17,6 @@
         <li class="list-row text-center text-wrap pb-1">{{ "Total : " + team_composition_totals.get(team_name)|string }}
         </li>
       </ul>
-
       {% endfor %}
     </div>
 
@@ -26,7 +25,7 @@
     Team Members
   </div>
   <div class="overflow-auto">
-    <div class="flex flex-col sm:flex-row justify-evenly ">
+    <div class="flex flex-col md:flex-row justify-evenly">
       {% include "partials/team_members_list.jinja2" %}
     </div>
   </div>
