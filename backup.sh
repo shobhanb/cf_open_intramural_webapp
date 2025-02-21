@@ -1,2 +1,2 @@
 #!/bin/sh
-cp /cf_open_intramural_webapp/database.db /backups/database-backup-`date +%F-%T`.db
+cp /root/cf_open_intramural_webapp/database.db /root/backups/database-backup-`date +%F-%T`.db
