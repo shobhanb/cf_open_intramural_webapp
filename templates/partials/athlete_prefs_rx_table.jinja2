@@ -1,7 +1,7 @@
 <div id="athlete-prefs-rx" class="card bg-base-100 w-full shadow-2xl">
   <div class="card-body">
     <div class="text-lg font-semibold">RX / Scaled</div>
-    <div class="text-xs">Select RX/Scaled</div>
+    <div class="text-xs">Select scaling</div>
     <div class="text-xs">It'll save automatically</div>
     <div id="rxspinner" class="htmx-indicator text-xs transition ease-in-out duration-500">Saved ✅</div>
     <select name="new_rx_pref" class="select w-full max-w-xs" hx-put="/athlete_prefs/rx/{{ rx_pref.athlete_id }}"
