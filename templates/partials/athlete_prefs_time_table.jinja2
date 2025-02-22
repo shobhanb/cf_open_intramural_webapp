@@ -1,21 +1,26 @@
-
 <div id="athlete-prefs-time" class="card bg-base-100 w-full shadow-2xl">
   <div class="card-body">
     <div class="text-lg font-semibold">Time Preferences</div>
     <div class="text-xs">Drag and drop time slot preferences</div>
     <div class="text-xs">It'll save automatically</div>
     <div class="text-xs">Heat assignments will be sent later</div>
-    <form id="athlete-time-prefs" class="sortable grid gap-2" hx-put="/athlete_prefs/time/{{ time_prefs[0].athlete_id }}" hx-trigger="end"
-      hx-target="#athlete-prefs-time" hx-swap="outerHTML">
+    <form id="athlete-time-prefs" class="sortable flex flex-col gap-2"
+      hx-put="/athlete_prefs/time/{{ time_prefs[0].athlete_id }}" hx-trigger="end" hx-target="#athlete-prefs-time"
+      hx-swap="outerHTML">
       <div class="htmx-indicator text-xs transition ease-in-out duration-500">Saved ✅</div>
       {% for row in time_prefs %}
-      {% if "pm" in row.preference %}
-      <div class="block py-1 px-4 border rounded-md text-center"><input type="hidden" name="time_pref"
-          value="{{ row.preference }}">{{ row.preference }}   🌚</div>
-      {% else %}
-      <div class="block py-1 px-4 border rounded-md text-center"><input type="hidden" name="time_pref"
-          value="{{ row.preference }}">{{ row.preference }}   ☀️️</div>
-      {% endif %}
+      <div class="flex flex-row place-items-center justify-start py-1 px-4 border rounded-md">
+        <input type="hidden" name="time_pref" value="{{ row.preference }}" />
+        {% if "pm" in row.preference %}
+        <span class="flex-0 ">🌚</span>
+        {% else %}
+        <span class="flex-0 ">☀</span>
+        {% endif %}
+        <span class="flex-auto px-4">{{ row.preference }}</span>
+        <svg class="block flex-0 h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+        </svg>
+      </div>
       {% endfor %}
     </form>
   </div>
