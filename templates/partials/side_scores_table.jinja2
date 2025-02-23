@@ -10,7 +10,7 @@
         {% for row in side_scores %}
         <tr>
             <td>{{ row.event_name }}</td>
-            <td class=>{{ row.score_type|replace("_"," ")|title }}</td>
+            <td>{{ row.score_type|replace("_"," ")|title }}</td>
             <td>{{ row.team_name }}</td>
             <td>
                 <div hx-delete={{ "/side_scores/" ~ row.id }} hx-target="table" hx-swap="outerHTML"
