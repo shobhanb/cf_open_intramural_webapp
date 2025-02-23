@@ -19,7 +19,7 @@ from app.athlete.service import (
 from app.auth.service import authenticate_request
 from app.cf_games.constants import TEAM_LEADER_REVERSE_MAP
 from app.database.dependencies import db_dependency
-from app.exceptions import unauthorised_exception
+from app.exceptions import not_found_exception, unauthorised_exception
 from app.ui.template import templates
 
 log = logging.getLogger("uvicorn.error")
@@ -178,6 +178,9 @@ async def put_rename_team(
     user = authenticate_request(request)
     if not user:
         raise unauthorised_exception()
+
+    if team_name_new == "":
+        raise not_found_exception()
 
     await rename_team(db_session=db_session, team_name_current=team_name_current, team_name_new=team_name_new)
 
