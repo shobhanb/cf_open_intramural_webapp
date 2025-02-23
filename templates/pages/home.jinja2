@@ -3,6 +3,7 @@
 {% block content %}
 <div class="grid grid-cols-5 grid-rows-1 gap-1">
   {% for team_name, logo in team_logos.items() %}
+  <a href="instagram://user?username={{ team_insta[team_name] }}">
   <img class="object-scale-down border rounded-md" src="{{ logo }}" title="{{ team_name }}" />
   {% endfor %}
 </div>
