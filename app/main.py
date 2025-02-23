@@ -46,10 +46,13 @@ async def custom_404_handler(request: Request, __) -> Response:  # noqa: ANN001
 
 
 async def get_404(request: Request) -> Response:
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         request=request,
         name="pages/404.jinja2",
     )
+    response.headers["HX-Retarget"] = "body"
+    response.headers["HX-Reswap"] = "innerhtml"
+    return response
 
 
 @app.middleware("http")
