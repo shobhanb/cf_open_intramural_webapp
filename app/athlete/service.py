@@ -116,7 +116,7 @@ async def assign_athlete_to_team(
 async def get_team_names(
     db_session: db_dependency,
 ) -> list[str]:
-    stmt = select(Athlete.team_name).distinct()
+    stmt = select(Athlete.team_name).distinct().order_by(Athlete.team_name)
     ret = await db_session.execute(stmt)
     result = ret.scalars()
     return list(result)
