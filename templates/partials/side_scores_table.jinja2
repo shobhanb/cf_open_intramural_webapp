@@ -1,4 +1,4 @@
-<table class="table table-xs md:table-md">
+<table class="table table-xs">
     <thead>
         <tr>
             <th>Event</th>
@@ -10,7 +10,7 @@
         {% for row in side_scores %}
         <tr>
             <td>{{ row.event_name }}</td>
-            <td>{{ row.score_type }}</td>
+            <td class=>{{ row.score_type|replace("_"," ")|title }}</td>
             <td>{{ row.team_name }}</td>
             <td>
                 <div hx-delete={{ "/side_scores/" ~ row.id }} hx-target="table" hx-swap="outerHTML"
@@ -34,7 +34,7 @@
         {% endfor %}
         <tr>
             <td>
-                <select name="event_name" class=" w-full max-w-xs" required>
+                <select name="event_name" class="w-full max-w-xs" required>
                     <option disabled selected value="">Event</option>
                     {% for event in info.event_names.values() %}
                     <option>{{ event }}</option>
@@ -42,14 +42,14 @@
                 </select>
             </td>
             <td>
-                <select name="score_type" class=" w-full max-w-xs" required>
+                <select name="score_type" class="w-full max-w-xs" required>
                     <option disabled selected value="">Score Type</option>
                     <option value="side_challenge">Side Challenge</option>
                     <option value="spirit">Spirit</option>
                 </select>
             </td>
             <td>
-                <select name="team_name" class=" w-full max-w-xs" required>
+                <select name="team_name" class="w-full max-w-xs" required>
                     <option disabled selected value="">Team</option>
                     {% for team in teams %}
                     <option>{{ team }}</option>
