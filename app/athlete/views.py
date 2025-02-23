@@ -169,11 +169,12 @@ async def put_rename_team(
 
     await rename_team(db_session=db_session, team_name_current=team_name_current, team_name_new=team_name_new)
 
+    teams = await get_team_names(db_session=db_session)
     return templates.TemplateResponse(
         request=request,
-        name="partials/done.jinja2",
+        name="pages/rename_teams.jinja2",
         context={
-            "url": "/rename_teams",
+            "teams": teams,
         },
     )
 

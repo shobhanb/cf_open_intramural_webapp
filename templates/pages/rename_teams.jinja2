@@ -9,28 +9,17 @@
       <div class="text-4xl font-bold">Rename Teams</div>
     </div>
     <div class="card bg-base-100 w-full shadow-2xl">
-      <div class="card-body flex">
-        <div class="overflow-x-auto">
-          <table class="table">
-            <tbody>
-              {% for team in teams %}
-                <tr>
-                  <td>{{team}}</td>
-                  <td>
-                    <input type="text" name="team_name_new" class="input input-bordered" required/>
-                  </td>
-                  <td>
-                    <button hx-put="/rename_team/{{team}}" hx-target=".hero-content" hx-swap="outerHTML"  hx-include="closest tr" class="btn btn-primary">Submit</button>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+      <div class="flex flex-col w-full">
+        {% for team in teams %}
+        <div class="rename-team flex flex-col gap-2 justify-between m-4">
+          <span>{{team}}</span>
+          <input type="text" name="team_name_new" class="input input-bordered" required />
+          <button hx-put="/rename_team/{{team}}" hx-target="body" hx-include="closest .rename-team"
+            class="btn btn-primary">Submit</button>
         </div>
+        {% endfor %}
       </div>
     </div>
-
   </div>
-</div>
 
-{% endblock content %}
+  {% endblock content %}
