@@ -71,21 +71,6 @@ async def get_rename_teams_page(request: Request, db_session: db_dependency) -> 
     )
 
 
-@athlete_router.get("/side_challenge_spirit", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def get_side_challenge_spirit_page(request: Request, _: db_dependency) -> Response:
-    user = authenticate_request(request)
-    if not user:
-        raise unauthorised_exception()
-
-    return templates.TemplateResponse(
-        request=request,
-        name="pages/side_challenge_spirit.jinja2",
-        context={
-            "teams": None,
-        },
-    )
-
-
 @athlete_router.get("/auto_team_assign", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def get_auto_team_assign_page(request: Request, db_session: db_dependency) -> Response:
     user = authenticate_request(request)
