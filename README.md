@@ -1,4 +1,4 @@
-# Webapp for Crossfit Open Intramural competitions
+# Webapp for Crossfit Open Community Competitions
 
 ## Tech used
 

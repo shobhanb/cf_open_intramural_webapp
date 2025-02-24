@@ -78,7 +78,7 @@ class Score(Base):
     judge_name: Mapped[str] = mapped_column(String)
     affiliate: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    # Affiliate Intramural data
+    # Affiliate data
     team_name: Mapped[str | None] = mapped_column(String, nullable=True)
     affiliate_rank: Mapped[int] = mapped_column(Integer, default=99)
     participation_score: Mapped[int] = mapped_column(Integer, default=0)
