@@ -11,3 +11,4 @@ class AthletePrefsModel(CustomBaseModel):
     preference_nbr: int
     preference: str
     updated_at: dt.datetime
+    created_at: dt.datetime
