@@ -4,6 +4,7 @@ log/
 node_modules/
 static/assets/
 *.csv
+certbot/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
