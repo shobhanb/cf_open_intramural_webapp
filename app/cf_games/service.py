@@ -245,16 +245,17 @@ async def apply_side_scores(
             .limit(1)
         )
         result = await db_session.execute(select_stmt)
-        score = result.scalar_one()
+        score = result.scalar_one_or_none()
 
-        if side_score.score_type == "side_challenge":
-            score.side_challenge_score = side_challenge_score
-            db_session.add(score)
-            await db_session.commit()
-        elif side_score.score_type == "spirit":
-            score.spirit_score = spirit_score
-            db_session.add(score)
-            await db_session.commit()
+        if score:
+            if side_score.score_type == "side_challenge":
+                score.side_challenge_score = side_challenge_score
+                db_session.add(score)
+                await db_session.commit()
+            elif side_score.score_type == "spirit":
+                score.spirit_score = spirit_score
+                db_session.add(score)
+                await db_session.commit()
 
 
 async def apply_spirit_score(
