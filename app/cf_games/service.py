@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import csv
 import logging
-from pathlib import Path
 
 from httpx import AsyncClient, HTTPError
 from sqlalchemy import func, select, update
@@ -22,7 +20,6 @@ from app.cf_games.constants import (
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
     SIDE_CHALLENGE_SCORE,
-    SPIRIT_FILEPATH,
     SPIRIT_SCORE,
     TOP3_SCORE,
     YEAR,
@@ -256,27 +253,6 @@ async def apply_side_scores(
                 score.spirit_score = spirit_score
                 db_session.add(score)
                 await db_session.commit()
-
-
-async def apply_spirit_score(
-    db_session: AsyncSession,
-) -> None:
-    with Path(SPIRIT_FILEPATH).open() as file:  # noqa: ASYNC230
-        reader = csv.reader(file)
-        for row in reader:
-            select_stmt = (
-                (
-                    select(Score.id)
-                    .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-                    .where((Score.event_name == row[0]) & (Athlete.team_name == row[1]))
-                )
-                .order_by(Athlete.team_leader.desc())
-                .limit(1)
-            )
-            update_stmt = update(Score).where(Score.id.in_(select_stmt.scalar_subquery())).values(spirit_score=row[2])
-            await db_session.execute(update_stmt)
-
-    await db_session.commit()
 
 
 async def apply_total_score(
