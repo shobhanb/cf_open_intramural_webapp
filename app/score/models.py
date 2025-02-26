@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -102,9 +102,7 @@ class Score(Base):
 
 
 class SideScore(Base):
-    __table_args__ = (UniqueConstraint("event_name", "score_type"),)
-
     event_name: Mapped[str] = mapped_column(String)
     score_type: Mapped[str] = mapped_column(String)
     team_name: Mapped[str] = mapped_column(String)
-    score: Mapped[int] = mapped_column(Integer, default=10)
+    score: Mapped[int] = mapped_column(Integer)

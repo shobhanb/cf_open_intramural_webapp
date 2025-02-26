@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 
 from app.athlete.service import get_team_names
-from app.cf_games.constants import EVENT_NAMES, TEAM_LOGOS
+from app.cf_games.constants import DEFAULT_SIDE_SCORE, EVENT_NAMES, TEAM_LOGOS
 from app.database.dependencies import db_dependency
 from app.exceptions import not_found_exception
 from app.score.models import SideScore
@@ -101,6 +101,7 @@ async def get_side_scores_page(
         context={
             "side_scores": side_scores,
             "teams": teams,
+            "default_score": DEFAULT_SIDE_SCORE,
         },
     )
 
@@ -126,33 +127,24 @@ async def delete_side_score_id(
         context={
             "side_scores": side_scores,
             "teams": teams,
+            "default_score": DEFAULT_SIDE_SCORE,
         },
     )
 
 
 @score_router.post("/side_scores", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
-async def post_side_score_new(
+async def post_side_score_new(  # noqa: PLR0913
     request: Request,
     db_session: db_dependency,
     event_name: Annotated[str, Form()],
     score_type: Annotated[str, Form()],
     team_name: Annotated[str, Form()],
+    score: Annotated[int, Form()],
 ) -> Response:
     teams = await get_team_names(db_session=db_session)
-    side_score = await SideScore.find(
-        async_session=db_session,
-        event_name=event_name,
-        score_type=score_type,
-        team_name=team_name,
-    )
 
-    if (
-        event_name in EVENT_NAMES.values()
-        and score_type in ["side_challenge", "spirit"]
-        and team_name in teams
-        and not side_score
-    ):
-        side_score = SideScore(event_name=event_name, score_type=score_type, team_name=team_name)
+    if event_name in EVENT_NAMES.values() and score_type in ["side_challenge", "spirit"] and team_name in teams:
+        side_score = SideScore(event_name=event_name, score_type=score_type, team_name=team_name, score=score)
         db_session.add(side_score)
         await db_session.commit()
 
@@ -166,6 +158,7 @@ async def post_side_score_new(
         context={
             "side_scores": side_scores,
             "teams": teams,
+            "default_score": DEFAULT_SIDE_SCORE,
         },
     )
 

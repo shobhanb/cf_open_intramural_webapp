@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.appreciation.models import Appreciation
 from app.athlete.models import Athlete
 from app.auth.service import authenticate_request
-from app.cf_games.constants import APPRECIATION_SCORE
+from app.cf_games.constants import DEFAULT_APPRECIATION_SCORE
 from app.database.dependencies import db_dependency
 from app.exceptions import unauthorised_exception
 from app.ui.template import templates
@@ -115,6 +115,6 @@ async def return_partial_appreciation_table(
         context={
             "appreciation": appreciation,
             "athletes": athletes,
-            "default_score": APPRECIATION_SCORE,
+            "default_score": DEFAULT_APPRECIATION_SCORE,
         },
     )

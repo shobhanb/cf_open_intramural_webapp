@@ -12,10 +12,11 @@
             <td>{{ row.event_name }}</td>
             <td>{{ row.score_type|replace("_"," ")|title }}</td>
             <td>{{ row.team_name }}</td>
+            <td>{{ row.score }}</td>
             <td>
                 <div hx-delete={{ "/side_scores/" ~ row.id }} hx-target="table" hx-swap="outerHTML"
                     class="cursor-pointer">
-                    <svg class="h-6 w-6" fill="#000000" version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg"
+                    <svg class="h-6 w-6" fill="currentColor" version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 32 32"
                         xml:space="preserve">
                         <style type="text/css">
@@ -37,7 +38,7 @@
                 <select name="event_name" class="w-full max-w-xs" required>
                     <option disabled selected value="">Event</option>
                     {% for event in info.event_names.values() %}
-                    <option>{{ event }}</option>
+                    <option value="{{ event }}">{{ event }}</option>
                     {% endfor %}
                 </select>
             </td>
@@ -52,9 +53,12 @@
                 <select name="team_name" class="w-full max-w-xs" required>
                     <option disabled selected value="">Team</option>
                     {% for team in teams %}
-                    <option>{{ team }}</option>
+                    <option value="{{ team }}">{{ team }}</option>
                     {% endfor %}
                 </select>
+            </td>
+            <td>
+                <input type="number" name="score" class="w-8" value="{{default_score}}" required />
             </td>
             <td>
                 <div hx-post="/side_scores" hx-target="table" hx-swap="outerHTML" hx-include="closest tr"
@@ -63,10 +67,10 @@
                         xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M11 8C11 7.44772 11.4477 7 12 7C12.5523 7 13 7.44772 13 8V11H16C16.5523 11 17 11.4477 17 12C17 12.5523 16.5523 13 16 13H13V16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16V13H8C7.44771 13 7 12.5523 7 12C7 11.4477 7.44772 11 8 11H11V8Z"
-                            fill="#0F0F0F" />
+                            fill="currentColor" />
                         <path fill-rule="evenodd" clip-rule="evenodd"
                             d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
-                            fill="#0F0F0F" />
+                            fill="currentColor" />
                     </svg>
                 </div>
             </td>

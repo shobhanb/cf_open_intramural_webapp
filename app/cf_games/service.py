@@ -19,8 +19,6 @@ from app.cf_games.constants import (
     HTTPX_TIMEOUT,
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
-    SIDE_CHALLENGE_SCORE,
-    SPIRIT_SCORE,
     TOP3_SCORE,
     YEAR,
 )
@@ -226,8 +224,6 @@ async def apply_appreciation_score(
 
 async def apply_side_scores(
     db_session: AsyncSession,
-    side_challenge_score: int = SIDE_CHALLENGE_SCORE,
-    spirit_score: int = SPIRIT_SCORE,
 ) -> None:
     side_scores = await SideScore.all(async_session=db_session)
 
@@ -246,11 +242,11 @@ async def apply_side_scores(
 
         if score:
             if side_score.score_type == "side_challenge":
-                score.side_challenge_score = side_challenge_score
+                score.side_challenge_score = side_score.score
                 db_session.add(score)
                 await db_session.commit()
             elif side_score.score_type == "spirit":
-                score.spirit_score = spirit_score
+                score.spirit_score = side_score.score
                 db_session.add(score)
                 await db_session.commit()
 
