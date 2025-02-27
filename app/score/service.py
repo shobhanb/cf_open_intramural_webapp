@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.athlete.models import Athlete
+from app.cf_games.constants import IGNORE_TEAMS
 from app.score.models import Score
 
 log = logging.getLogger("uvicorn.error")
@@ -30,7 +31,7 @@ async def get_db_team_scores(
             func.sum(Score.total_score).label("total_score"),
         )
         .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-        .where(Score.ordinal == ordinal)
+        .where((Score.ordinal == ordinal) & (Athlete.team_name.not_in(IGNORE_TEAMS)))
         .group_by(Athlete.team_name)
         .order_by(Athlete.team_name)
     )
@@ -52,6 +53,7 @@ async def get_total_scores(db_session: AsyncSession) -> dict[str, dict[str, Any]
             func.sum(Score.total_score).label("overall_score"),
         )
         .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+        .where(Athlete.team_name.not_in(IGNORE_TEAMS))
         .group_by(Athlete.team_name)
         .order_by(Athlete.team_name)
     )

@@ -9,7 +9,7 @@ from uuid import UUID
 from sqlalchemy import func, select, text, update
 
 from app.athlete.models import Athlete
-from app.cf_games.constants import AFFILIATE_ID, TEAM_LEADER_MAP, YEAR
+from app.cf_games.constants import AFFILIATE_ID, IGNORE_TEAMS, TEAM_LEADER_MAP, YEAR
 from app.database.dependencies import db_dependency
 from app.score.models import SideScore
 
@@ -158,7 +158,7 @@ async def random_assign_zz_athlete(
                 # Pick team that should get a person next
                 select_team_stmt = (
                     select(Athlete.team_name, func.count().label("count"))
-                    .where(Athlete.team_name != "zz")
+                    .where(Athlete.team_name.not_in(IGNORE_TEAMS))
                     .group_by(Athlete.team_name)
                     .order_by(text("count ASC"), Athlete.team_name)
                 ).limit(1)

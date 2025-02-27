@@ -17,6 +17,7 @@ from app.cf_games.constants import (
     CF_DIVISION_MAP,
     CF_LEADERBOARD_URL,
     HTTPX_TIMEOUT,
+    IGNORE_TEAMS,
     JUDGE_SCORE,
     PARTICIPATION_SCORE,
     TOP3_SCORE,
@@ -145,15 +146,19 @@ async def process_cf_data(
 async def apply_ranks(
     db_session: AsyncSession,
 ) -> None:
-    select_stmt = select(
-        Score.id,
-        func.rank()
-        .over(
-            partition_by=[Score.ordinal, Athlete.gender, Athlete.mf_age_category, Score.affiliate_scaled],
-            order_by=[Score.scaled.asc(), Score.score.desc()],
+    select_stmt = (
+        select(
+            Score.id,
+            func.rank()
+            .over(
+                partition_by=[Score.ordinal, Athlete.gender, Athlete.mf_age_category, Score.affiliate_scaled],
+                order_by=[Score.scaled.asc(), Score.score.desc()],
+            )
+            .label("affiliate_rank"),
         )
-        .label("affiliate_rank"),
-    ).join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+        .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
+        .where(Athlete.team_name.not_in(IGNORE_TEAMS))
+    )
     ranks = await db_session.execute(select_stmt)
     values = ranks.mappings().all()
     await db_session.execute(update(Score), [dict(x) for x in values])

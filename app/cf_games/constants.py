@@ -53,6 +53,10 @@ ATTENDANCE_SCORE = 2
 DEFAULT_APPRECIATION_SCORE = 10
 DEFAULT_SIDE_SCORE = 25
 
+IGNORE_TEAMS = [
+    "Short-put Bai-kar",
+    "zz",
+]
 
 CF_DIVISION_MAP = {
     "1": "Men Open",

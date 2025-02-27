@@ -80,7 +80,7 @@ class Score(Base):
 
     # Affiliate data
     team_name: Mapped[str | None] = mapped_column(String, nullable=True)
-    affiliate_rank: Mapped[int] = mapped_column(Integer, default=99)
+    affiliate_rank: Mapped[int] = mapped_column(Integer, default=999)
     participation_score: Mapped[int] = mapped_column(Integer, default=0)
     top3_score: Mapped[int] = mapped_column(Integer, default=0)
     judge_score: Mapped[int] = mapped_column(Integer, default=0)

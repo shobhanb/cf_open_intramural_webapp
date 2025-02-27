@@ -39,7 +39,7 @@
         {% for athlete in scores[category] %}
         <tr>
           <td>{{ athlete.affiliate_scaled }}</td>
-          <td>{{ athlete.affiliate_rank }}</td>
+          <td>{{ athlete.affiliate_rank|replace("999","") }}</td>
           <td>{{ athlete.name }}</td>
           <td>{{ athlete.valid }}</td>
           <td>{{ athlete.team_name }}</td>
