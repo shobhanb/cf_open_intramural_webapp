@@ -157,7 +157,7 @@ async def apply_ranks(
             .label("affiliate_rank"),
         )
         .join_from(Score, Athlete, Score.athlete_id == Athlete.id)
-        .where(Athlete.team_name.not_in(IGNORE_TEAMS))
+        .where((Athlete.team_name.not_in(IGNORE_TEAMS)) & (Score.score > 0))
     )
     ranks = await db_session.execute(select_stmt)
     values = ranks.mappings().all()
