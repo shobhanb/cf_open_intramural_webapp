@@ -124,6 +124,7 @@ async def get_all_athlete_scores(
             Score.reps,
             Score.time_ms,
             Score.tiebreak_ms,
+            Score.judge_name,
             Score.participation_score,
             Score.top3_score,
             Score.attendance_score,
