@@ -13,6 +13,7 @@ from app.athlete_prefs.constants import RX_PREFS, TIME_PREFS
 from app.athlete_prefs.models import AthleteRXPref, AthleteTimePref
 from app.athlete_prefs.schemas import AthletePrefsModel
 from app.athlete_prefs.service import get_athlete_prefs_data_dump
+from app.cf_games.constants import IGNORE_TEAMS
 from app.database.dependencies import db_dependency
 from app.exceptions import not_found_exception
 from app.ui.template import templates
@@ -24,7 +25,7 @@ athlete_prefs_router = APIRouter()
 
 @athlete_prefs_router.get("/athlete_prefs_page", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def get_athlete_prefs_page(request: Request, db_session: db_dependency) -> Response:
-    stmt = select(Athlete.id, Athlete.name).order_by(Athlete.name)
+    stmt = select(Athlete.id, Athlete.name).where(Athlete.team_name.not_in(IGNORE_TEAMS)).order_by(Athlete.name)
     ret = await db_session.execute(stmt)
     athletes = ret.mappings().all()
 
