@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 from httpx import AsyncClient, HTTPError
+from pydantic import ValidationError
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -99,7 +100,11 @@ async def process_cf_data(
     await Score.delete_all(async_session=db_session)
 
     for entrant, scores in zip(entrant_list, scores_list, strict=True):
-        entrant_model = CFEntrantInputModel.model_validate(entrant)
+        try:
+            entrant_model = CFEntrantInputModel.model_validate(entrant)
+        except ValidationError:
+            log.exception("Error validating Entrant %s", entrant)
+            raise
         athlete = await Athlete.find(async_session=db_session, competitor_id=entrant_model.competitor_id)
         if athlete is None:
             athlete = Athlete(**entrant_model.model_dump(), year=year)
@@ -107,7 +112,11 @@ async def process_cf_data(
 
         if scores:
             for score in scores:
-                score_model = CFScoreInputModel.model_validate(score)
+                try:
+                    score_model = CFScoreInputModel.model_validate(score)
+                except ValidationError:
+                    log.exception("Error validating Entrant %s score %s", entrant, score)
+                    raise
                 event_score = await Score.find(
                     async_session=db_session,
                     athlete_id=athlete.id,

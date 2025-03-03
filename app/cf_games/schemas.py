@@ -40,7 +40,7 @@ class CFScoreInputModel(CustomBaseModel):
     scaled: int
     breakdown: str | None
     time: int | None = None
-    judge_name: str | None = Field(alias="judge")
+    judge_name: str | None = Field(alias="judge", default="")
     judge_user_id: int | None = None
     affiliate: str | None = None
 
